@@ -1,0 +1,1 @@
+/* simplified for iPad */
