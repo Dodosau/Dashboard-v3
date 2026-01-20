@@ -55,28 +55,16 @@ function displayGroupedEvents(events) {
 
   const now = new Date();
 
-  // -----------------------------
-  // 1️⃣ Définir la fenêtre : aujourd’hui → +3 jours
-  // -----------------------------
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const maxDate = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-  // -----------------------------
-  // 2️⃣ Garder seulement les événements dans cette fenêtre
-  // -----------------------------
   events = events.filter(ev => {
     const day = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate());
     return day >= today && day <= maxDate;
   });
 
-  // -----------------------------
-  // 3️⃣ Supprimer les événements déjà terminés
-  // -----------------------------
   events = events.filter(ev => !ev.end || ev.end > now);
 
-  // -----------------------------
-  // 4️⃣ Regrouper par jour
-  // -----------------------------
   const grouped = {};
   for (const ev of events) {
     const key = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate()).getTime();
@@ -84,14 +72,8 @@ function displayGroupedEvents(events) {
     grouped[key].push(ev);
   }
 
-  // -----------------------------
-  // 5️⃣ Trier les jours
-  // -----------------------------
   const keys = Object.keys(grouped).sort((a, b) => a - b);
 
-  // -----------------------------
-  // 6️⃣ Affichage
-  // -----------------------------
   for (const key of keys) {
     const date = new Date(parseInt(key));
     const label = date.toLocaleDateString("fr-FR", {
@@ -108,12 +90,10 @@ function displayGroupedEvents(events) {
     title.textContent = "📅 " + label;
     block.appendChild(title);
 
-    // Trier les événements du jour par heure
     grouped[key].sort((a, b) => a.start - b.start);
 
     for (const ev of grouped[key]) {
       const table = document.createElement("table");
-      table.style.width = "100%";
 
       const tr1 = document.createElement("tr");
       const tr2 = document.createElement("tr");
