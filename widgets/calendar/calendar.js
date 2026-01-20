@@ -1,4 +1,5 @@
 (function () {
+
   function init() {
     var d1 = document.getElementById("calDay1");
     var e1 = document.getElementById("calEvents1");
@@ -18,7 +19,11 @@
 
   function loadICS(cb) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://dodosau.github.io/Dashboard-v3/calendar.ics", true);
+
+    // Empêche Safari de garder une vieille version en cache
+    var url = "https://dodosau.github.io/Dashboard-v3/calendar.ics?v=" + Date.now();
+
+    xhr.open("GET", url, true);
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
@@ -73,8 +78,13 @@
 
     var groups = [[], [], [], []];
 
+    // Filtrer les événements passés
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
+
+      // Si l'événement est terminé → on ignore
+      if (ev.end && ev.end < now) continue;
+
       for (var d = 0; d < 4; d++) {
         var day = days[d];
         if (
@@ -88,7 +98,11 @@
     }
 
     function fmtDate(d) {
-      return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+      var dd = d.getDate();
+      var mm = d.getMonth() + 1;
+      var yy = d.getFullYear();
+      if (mm < 10) mm = "0" + mm;
+      return dd + "/" + mm + "/" + yy;
     }
 
     function fmtTime(d) {
@@ -150,9 +164,13 @@
     }
   }
 
+  // 🔄 Auto-refresh toutes les 60 secondes
+  setInterval(init, 60000);
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
   }
+
 })();
