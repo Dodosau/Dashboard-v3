@@ -1,18 +1,10 @@
 (function () {
   function init() {
-    var d1 = document.getElementById("calDay1");
-    var e1 = document.getElementById("calEvents1");
-    var d2 = document.getElementById("calDay2");
-    var e2 = document.getElementById("calEvents2");
-    var d3 = document.getElementById("calDay3");
-    var e3 = document.getElementById("calEvents3");
-    var d4 = document.getElementById("calDay4");
-    var e4 = document.getElementById("calEvents4");
-
-    if (!d1 || !e1) return;
+    var container = document.querySelector('[data-widget="calendar"]');
+    if (!container) return;
 
     loadICS(function(events) {
-      render(events, [d1,e1], [d2,e2], [d3,e3], [d4,e4]);
+      render(events, container);
     });
   }
 
@@ -62,7 +54,7 @@
     );
   }
 
-  function render(events, d1, d2, d3, d4) {
+  function render(events, container) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -87,8 +79,11 @@
       }
     }
 
-    function fmt(d) {
-      return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    function fmtDate(d) {
+      var y = d.getFullYear();
+      var m = d.getMonth() + 1;
+      var day = d.getDate();
+      return day + " janvier " + y; // version simplifiée pour janvier
     }
 
     function fmtTime(d) {
@@ -97,26 +92,55 @@
       return h+":"+m;
     }
 
-    var slots = [d1, d2, d3, d4];
+    function label(i, d) {
+      if (i === 0) return "Aujourd’hui — " + fmtDate(d);
+      if (i === 1) return "Demain — " + fmtDate(d);
+      return weekday(d) + " — " + fmtDate(d);
+    }
+
+    function weekday(d) {
+      var days = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+      return days[d.getDay()];
+    }
+
+    container.innerHTML = "";
 
     for (var i = 0; i < 4; i++) {
-      var dayEl = slots[i][0];
-      var evEl  = slots[i][1];
+      var block = document.createElement("div");
+      block.className = "card";
+      block.style.marginBottom = "20px";
 
-      dayEl.textContent = fmt(days[i]);
-      evEl.innerHTML = "";
+      var title = document.createElement("div");
+      title.className = "title";
+      title.textContent = label(i, days[i]);
+      block.appendChild(title);
 
       var list = groups[i];
+      if (list.length === 0) {
+        var empty = document.createElement("div");
+        empty.className = "small";
+        empty.textContent = "Aucun événement";
+        block.appendChild(empty);
+      }
+
       for (var j = 0; j < list.length; j++) {
         var ev = list[j];
         var div = document.createElement("div");
-        div.innerHTML =
-          ev.summary + "<br><span class='small'>" +
-          fmtTime(ev.start) +
-          (ev.end ? " - " + fmtTime(ev.end) : "") +
-          "</span>";
-        evEl.appendChild(div);
+        div.style.marginBottom = "10px";
+
+        var name = document.createElement("div");
+        name.textContent = ev.summary;
+        div.appendChild(name);
+
+        var time = document.createElement("div");
+        time.className = "small";
+        time.textContent = fmtTime(ev.start) + (ev.end ? " - " + fmtTime(ev.end) : "");
+        div.appendChild(time);
+
+        block.appendChild(div);
       }
+
+      container.appendChild(block);
     }
   }
 
