@@ -1,5 +1,6 @@
 function loadCalendar() {
-  fetch("../../calendar.ics")
+  // Chemin ABSOLU pour iPad + GitHub Pages
+  fetch("https://dodosau.github.io/Dashboard-v3/calendar.ics")
     .then(function(r) { return r.text(); })
     .then(function(text) {
       var events = parseICS(text);
@@ -89,11 +90,7 @@ function displayGroupedEvents(events) {
     var key = keys[k];
     var date = new Date(parseInt(key, 10));
 
-    var label = date.toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long"
-    });
+    var label = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
 
     var block = document.createElement("div");
     block.className = "day-block";
