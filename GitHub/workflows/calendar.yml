@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,7 +24,7 @@ jobs:
       - name: Update calendar JSON
         run: python update_calendar.py
 
-      - name: Commit changes
+      - name: Commit and push changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
