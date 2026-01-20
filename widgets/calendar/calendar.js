@@ -1,26 +1,36 @@
 (function () {
-  var el = document.getElementById("calendar");
-  if (!el) return;
 
-  el.innerHTML = "<div class='small'>Chargement…</div>";
+  function init() {
+    var d1 = document.getElementById("calDay1");
+    var e1 = document.getElementById("calEvents1");
+    var d2 = document.getElementById("calDay2");
+    var e2 = document.getElementById("calEvents2");
+    var d3 = document.getElementById("calDay3");
+    var e3 = document.getElementById("calEvents3");
+    var d4 = document.getElementById("calDay4");
+    var e4 = document.getElementById("calEvents4");
 
-  var url = "https://dodosau.github.io/Dashboard-v3/calendar.ics";
+    if (!d1 || !e1) return;
 
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
+    loadICS(function(events) {
+      render(events, [d1,e1], [d2,e2], [d3,e3], [d4,e4]);
+    });
+  }
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        var events = parseICS(xhr.responseText);
-        displayEvents(events);
-      } else {
-        el.innerHTML = "<div class='small'>Erreur : " + xhr.status + "</div>";
+  function loadICS(cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://dodosau.github.io/Dashboard-v3/calendar.ics", true);
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          cb(parseICS(xhr.responseText));
+        }
       }
-    }
-  };
+    };
 
-  xhr.send();
+    xhr.send();
+  }
 
   function parseICS(text) {
     var events = [];
@@ -29,16 +39,16 @@
     for (var i = 1; i < blocks.length; i++) {
       var block = blocks[i];
 
-      var summaryMatch = block.match(/SUMMARY:(.+)/);
-      var startMatch = block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/);
-      var endMatch = block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/);
+      var summary = (block.match(/SUMMARY:(.+)/) || [])[1];
+      var start = (block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
+      var end   = (block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
 
-      if (summaryMatch && startMatch) {
-        var summary = summaryMatch[1].trim();
-        var start = parseICSTime(startMatch[1]);
-        var end = endMatch ? parseICSTime(endMatch[1]) : null;
-
-        events.push({ summary: summary, start: start, end: end });
+      if (summary && start) {
+        events.push({
+          summary: summary.trim(),
+          start: parseICSTime(start),
+          end: end ? parseICSTime(end) : null
+        });
       }
     }
 
@@ -47,81 +57,76 @@
 
   function parseICSTime(str) {
     return new Date(
-      parseInt(str.substring(0, 4), 10),
-      parseInt(str.substring(4, 6), 10) - 1,
-      parseInt(str.substring(6, 8), 10),
-      parseInt(str.substring(9, 11), 10),
-      parseInt(str.substring(11, 13), 10)
+      parseInt(str.substring(0,4),10),
+      parseInt(str.substring(4,6),10)-1,
+      parseInt(str.substring(6,8),10),
+      parseInt(str.substring(9,11),10),
+      parseInt(str.substring(11,13),10)
     );
   }
 
-  function formatTime(date) {
-    var h = date.getHours();
-    var m = date.getMinutes();
-    if (h < 10) h = "0" + h;
-    if (m < 10) m = "0" + m;
-    return h + ":" + m;
-  }
-
-  function displayEvents(events) {
+  function render(events, d1, d2, d3, d4) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var maxDate = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-    events = events.filter(function (ev) {
-      var d = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate());
-      return d >= today && d <= maxDate;
-    });
-
-    events = events.filter(function (ev) {
-      return !ev.end || ev.end > now;
-    });
-
-    var grouped = {};
-    for (var i = 0; i < events.length; i++) {
-      var ev = events[i];
-      var key = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate()).getTime();
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(ev);
+    var days = [];
+    for (var i = 0; i < 4; i++) {
+      days.push(new Date(today.getTime() + i * 86400000));
     }
 
-    var keys = Object.keys(grouped).sort(function (a, b) { return a - b; });
+    var groups = [[],[],[],[]];
 
-    el.innerHTML = "";
+    for (var i = 0; i < events.length; i++) {
+      var ev = events[i];
+      for (var d = 0; d < 4; d++) {
+        var day = days[d];
+        if (
+          ev.start.getFullYear() === day.getFullYear() &&
+          ev.start.getMonth() === day.getMonth() &&
+          ev.start.getDate() === day.getDate()
+        ) {
+          groups[d].push(ev);
+        }
+      }
+    }
 
-    for (var k = 0; k < keys.length; k++) {
-      var key = keys[k];
-      var date = new Date(parseInt(key, 10));
+    function fmt(d) {
+      return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    }
 
-      var label = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+    function fmtTime(d) {
+      var h = d.getHours(); if (h<10) h="0"+h;
+      var m = d.getMinutes(); if (m<10) m="0"+m;
+      return h+":"+m;
+    }
 
-      var dayTitle = document.createElement("div");
-      dayTitle.className = "small";
-      dayTitle.style.marginBottom = "6px";
-      dayTitle.textContent = label;
-      el.appendChild(dayTitle);
+    var slots = [d1, d2, d3, d4];
 
-      grouped[key].sort(function (a, b) {
-        return a.start - b.start;
-      });
+    for (var i = 0; i < 4; i++) {
+      var dayEl = slots[i][0];
+      var evEl  = slots[i][1];
 
-      for (var j = 0; j < grouped[key].length; j++) {
-        var ev2 = grouped[key][j];
+      dayEl.textContent = fmt(days[i]);
+      evEl.innerHTML = "";
 
-        var wrapper = document.createElement("div");
-        wrapper.style.marginBottom = "10px";
-
-        var title = document.createElement("div");
-        title.textContent = ev2.summary;
-        wrapper.appendChild(title);
-
-        var time = document.createElement("div");
-        time.className = "small";
-        time.textContent = formatTime(ev2.start) + (ev2.end ? " - " + formatTime(ev2.end) : "");
-        wrapper.appendChild(time);
-
-        el.appendChild(wrapper);
+      var list = groups[i];
+      for (var j = 0; j < list.length; j++) {
+        var ev = list[j];
+        var div = document.createElement("div");
+        div.innerHTML =
+          ev.summary + "<br><span class='small'>" +
+          fmtTime(ev.start) +
+          (ev.end ? " - " + fmtTime(ev.end) : "") +
+          "</span>";
+        evEl.appendChild(div);
       }
     }
   }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
 })();
