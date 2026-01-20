@@ -1,8 +1,29 @@
-#calendar-events {
-  font-family: sans-serif;
+.calendar-section {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.calendar-section h2 {
+  font-size: 18px;
+  margin-top: 20px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.calendar-list {
+  margin-top: 10px;
 }
 
 .event {
-  margin-bottom: 6px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #ccc;
+  font-size: 15px;
+}
+
+.event strong {
+  color: #007aff;
+  margin-right: 8px;
 }
