@@ -1,5 +1,4 @@
 (function () {
-
   function init() {
     var d1 = document.getElementById("calDay1");
     var e1 = document.getElementById("calEvents1");
@@ -22,10 +21,8 @@
     xhr.open("GET", "https://dodosau.github.io/Dashboard-v3/calendar.ics", true);
 
     xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          cb(parseICS(xhr.responseText));
-        }
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        cb(parseICS(xhr.responseText));
       }
     };
 
@@ -128,5 +125,4 @@
   } else {
     init();
   }
-
 })();
