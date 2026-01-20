@@ -1,10 +1,18 @@
 (function () {
   function init() {
-    var container = document.querySelector('[data-widget="calendar"]');
-    if (!container) return;
+    var d1 = document.getElementById("calDay1");
+    var e1 = document.getElementById("calEvents1");
+    var d2 = document.getElementById("calDay2");
+    var e2 = document.getElementById("calEvents2");
+    var d3 = document.getElementById("calDay3");
+    var e3 = document.getElementById("calEvents3");
+    var d4 = document.getElementById("calDay4");
+    var e4 = document.getElementById("calEvents4");
 
-    loadICS(function(events) {
-      render(events, container);
+    if (!d1 || !e1) return;
+
+    loadICS(function (events) {
+      render(events, [d1, e1], [d2, e2], [d3, e3], [d4, e4]);
     });
   }
 
@@ -30,7 +38,7 @@
 
       var summary = (block.match(/SUMMARY:(.+)/) || [])[1];
       var start = (block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
-      var end   = (block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
+      var end = (block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
 
       if (summary && start) {
         events.push({
@@ -46,15 +54,15 @@
 
   function parseICSTime(str) {
     return new Date(
-      parseInt(str.substring(0,4),10),
-      parseInt(str.substring(4,6),10)-1,
-      parseInt(str.substring(6,8),10),
-      parseInt(str.substring(9,11),10),
-      parseInt(str.substring(11,13),10)
+      parseInt(str.substring(0, 4), 10),
+      parseInt(str.substring(4, 6), 10) - 1,
+      parseInt(str.substring(6, 8), 10),
+      parseInt(str.substring(9, 11), 10),
+      parseInt(str.substring(11, 13), 10)
     );
   }
 
-  function render(events, container) {
+  function render(events, d1, d2, d3, d4) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -63,7 +71,7 @@
       days.push(new Date(today.getTime() + i * 86400000));
     }
 
-    var groups = [[],[],[],[]];
+    var groups = [[], [], [], []];
 
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
@@ -83,13 +91,15 @@
       var y = d.getFullYear();
       var m = d.getMonth() + 1;
       var day = d.getDate();
-      return day + " janvier " + y; // version simplifiée pour janvier
+      return day + "/" + (m < 10 ? "0" + m : m) + "/" + y;
     }
 
     function fmtTime(d) {
-      var h = d.getHours(); if (h<10) h="0"+h;
-      var m = d.getMinutes(); if (m<10) m="0"+m;
-      return h+":"+m;
+      var h = d.getHours();
+      var m = d.getMinutes();
+      if (h < 10) h = "0" + h;
+      if (m < 10) m = "0" + m;
+      return h + ":" + m;
     }
 
     function label(i, d) {
@@ -99,48 +109,47 @@
     }
 
     function weekday(d) {
-      var days = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+      var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
       return days[d.getDay()];
     }
 
-    container.innerHTML = "";
+    var slots = [d1, d2, d3, d4];
 
     for (var i = 0; i < 4; i++) {
-      var block = document.createElement("div");
-      block.className = "card";
-      block.style.marginBottom = "20px";
+      var dayEl = slots[i][0];
+      var evEl = slots[i][1];
 
-      var title = document.createElement("div");
-      title.className = "title";
-      title.textContent = label(i, days[i]);
-      block.appendChild(title);
+      dayEl.textContent = label(i, days[i]);
+      evEl.innerHTML = "";
 
       var list = groups[i];
+
       if (list.length === 0) {
         var empty = document.createElement("div");
         empty.className = "small";
         empty.textContent = "Aucun événement";
-        block.appendChild(empty);
+        evEl.appendChild(empty);
+        continue;
       }
 
       for (var j = 0; j < list.length; j++) {
         var ev = list[j];
-        var div = document.createElement("div");
-        div.style.marginBottom = "10px";
+
+        var wrap = document.createElement("div");
+        wrap.style.marginBottom = "8px";
 
         var name = document.createElement("div");
         name.textContent = ev.summary;
-        div.appendChild(name);
+        wrap.appendChild(name);
 
         var time = document.createElement("div");
         time.className = "small";
-        time.textContent = fmtTime(ev.start) + (ev.end ? " - " + fmtTime(ev.end) : "");
-        div.appendChild(time);
+        time.textContent =
+          fmtTime(ev.start) + (ev.end ? " - " + fmtTime(ev.end) : "");
+        wrap.appendChild(time);
 
-        block.appendChild(div);
+        evEl.appendChild(wrap);
       }
-
-      container.appendChild(block);
     }
   }
 
