@@ -1,22 +1,37 @@
-fetch('widgets/calendar/events.json')
-  .then(r => r.json())
-  .then(events => {
-    const container = document.getElementById('calendar-events');
-    container.innerHTML = '';
+function loadCalendar() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'widgets/calendar/events.json', true);
 
-    if (!events || events.length === 0) {
-      container.innerHTML = '<p>Aucun rendez-vous aujourd’hui.</p>';
-      return;
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      var container = document.getElementById('calendar-events');
+
+      if (xhr.status === 200) {
+        try {
+          var events = JSON.parse(xhr.responseText);
+          container.innerHTML = '';
+
+          if (!events || events.length === 0) {
+            container.innerHTML = '<p>Aucun rendez-vous aujourd’hui.</p>';
+            return;
+          }
+
+          events.forEach(function (ev) {
+            var div = document.createElement('div');
+            div.className = 'event';
+            div.innerHTML = '<strong>' + ev.time + '</strong> — ' + ev.summary;
+            container.appendChild(div);
+          });
+        } catch (e) {
+          container.innerHTML = '<p>Erreur de lecture du calendrier.</p>';
+        }
+      } else {
+        container.innerHTML = '<p>Impossible de charger le calendrier.</p>';
+      }
     }
+  };
 
-    events.forEach(ev => {
-      const div = document.createElement('div');
-      div.className = 'event';
-      div.innerHTML = `<strong>${ev.time}</strong> — ${ev.summary}`;
-      container.appendChild(div);
-    });
-  })
-  .catch(() => {
-    document.getElementById('calendar-events').innerHTML =
-      '<p>Erreur de chargement du calendrier.</p>';
-  });
+  xhr.send();
+}
+
+loadCalendar();
