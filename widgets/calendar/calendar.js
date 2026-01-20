@@ -4,34 +4,45 @@ function loadCalendar() {
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
-      var container = document.getElementById('calendar-events');
-
       if (xhr.status === 200) {
         try {
-          var events = JSON.parse(xhr.responseText);
-          container.innerHTML = '';
-
-          if (!events || events.length === 0) {
-            container.innerHTML = '<p>Aucun rendez-vous aujourd’hui.</p>';
-            return;
-          }
-
-          events.forEach(function (ev) {
-            var div = document.createElement('div');
-            div.className = 'event';
-            div.innerHTML = '<strong>' + ev.time + '</strong> — ' + ev.summary;
-            container.appendChild(div);
-          });
+          var data = JSON.parse(xhr.responseText);
+          renderSection('calendar-today', data.today);
+          renderSection('calendar-tomorrow', data.tomorrow);
+          renderSection('calendar-upcoming', data.upcoming);
         } catch (e) {
-          container.innerHTML = '<p>Erreur de lecture du calendrier.</p>';
+          showError();
         }
       } else {
-        container.innerHTML = '<p>Impossible de charger le calendrier.</p>';
+        showError();
       }
     }
   };
 
   xhr.send();
+
+  function renderSection(id, events) {
+    var container = document.getElementById(id);
+    container.innerHTML = '';
+
+    if (!events || events.length === 0) {
+      container.innerHTML = '<p>Aucun événement.</p>';
+      return;
+    }
+
+    events.forEach(function (ev) {
+      var div = document.createElement('div');
+      div.className = 'event';
+      div.innerHTML = '<strong>' + ev.time + '</strong>' + ev.summary;
+      container.appendChild(div);
+    });
+  }
+
+  function showError() {
+    ['calendar-today', 'calendar-tomorrow', 'calendar-upcoming'].forEach(function (id) {
+      document.getElementById(id).innerHTML = '<p>Erreur de chargement.</p>';
+    });
+  }
 }
 
 loadCalendar();
