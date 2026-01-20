@@ -1,30 +1,34 @@
 (function () {
-  var el = document.getElementById("calendar");
-  if (!el) return;
+  function init() {
+    var d1 = document.getElementById("calDay1");
+    var e1 = document.getElementById("calEvents1");
+    var d2 = document.getElementById("calDay2");
+    var e2 = document.getElementById("calEvents2");
+    var d3 = document.getElementById("calDay3");
+    var e3 = document.getElementById("calEvents3");
+    var d4 = document.getElementById("calDay4");
+    var e4 = document.getElementById("calEvents4");
 
-  el.innerHTML = "Chargement du calendrier…";
+    if (!d1 || !e1) return;
 
-  var url = "https://dodosau.github.io/Dashboard-v3/calendar.ics";
+    loadICS(function(events) {
+      render(events, [d1,e1], [d2,e2], [d3,e3], [d4,e4]);
+    });
+  }
 
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url, true);
+  function loadICS(cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://dodosau.github.io/Dashboard-v3/calendar.ics", true);
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        var events = parseICS(xhr.responseText);
-        displayEvents(events);
-      } else {
-        el.innerHTML = "Erreur de chargement : " + xhr.status;
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        cb(parseICS(xhr.responseText));
       }
-    }
-  };
+    };
 
-  xhr.send();
+    xhr.send();
+  }
 
-  // -----------------------------
-  // PARSE ICS
-  // -----------------------------
   function parseICS(text) {
     var events = [];
     var blocks = text.split("BEGIN:VEVENT");
@@ -32,132 +36,93 @@
     for (var i = 1; i < blocks.length; i++) {
       var block = blocks[i];
 
-      var summaryMatch = block.match(/SUMMARY:(.+)/);
-      var startMatch = block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/);
-      var endMatch = block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/);
+      var summary = (block.match(/SUMMARY:(.+)/) || [])[1];
+      var start = (block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
+      var end   = (block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/) || [])[1];
 
-      if (summaryMatch && startMatch) {
-        var summary = summaryMatch[1].trim();
-        var start = parseICSTime(startMatch[1]);
-        var end = endMatch ? parseICSTime(endMatch[1]) : null;
-
-        events.push({ summary: summary, start: start, end: end });
+      if (summary && start) {
+        events.push({
+          summary: summary.trim(),
+          start: parseICSTime(start),
+          end: end ? parseICSTime(end) : null
+        });
       }
     }
 
     return events;
   }
 
-  // -----------------------------
-  // PARSE DATE ICS
-  // -----------------------------
   function parseICSTime(str) {
     return new Date(
-      parseInt(str.substring(0, 4), 10),
-      parseInt(str.substring(4, 6), 10) - 1,
-      parseInt(str.substring(6, 8), 10),
-      parseInt(str.substring(9, 11), 10),
-      parseInt(str.substring(11, 13), 10)
+      parseInt(str.substring(0,4),10),
+      parseInt(str.substring(4,6),10)-1,
+      parseInt(str.substring(6,8),10),
+      parseInt(str.substring(9,11),10),
+      parseInt(str.substring(11,13),10)
     );
   }
 
-  // -----------------------------
-  // FORMAT HEURE
-  // -----------------------------
-  function formatTime(date) {
-    var h = date.getHours();
-    var m = date.getMinutes();
-    if (h < 10) h = "0" + h;
-    if (m < 10) m = "0" + m;
-    return h + ":" + m;
-  }
-
-  // -----------------------------
-  // AFFICHAGE FILTRÉ
-  // -----------------------------
-  function displayEvents(events) {
+  function render(events, d1, d2, d3, d4) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var maxDate = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
 
-    // Garder seulement aujourd’hui → +3 jours
-    events = events.filter(function (ev) {
-      var d = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate());
-      return d >= today && d <= maxDate;
-    });
+    var days = [];
+    for (var i = 0; i < 4; i++) {
+      days.push(new Date(today.getTime() + i * 86400000));
+    }
 
-    // Supprimer les événements déjà terminés
-    events = events.filter(function (ev) {
-      return !ev.end || ev.end > now;
-    });
+    var groups = [[],[],[],[]];
 
-    // Regrouper par jour
-    var grouped = {};
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
-      var key = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate()).getTime();
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(ev);
-    }
-
-    var keys = Object.keys(grouped).sort(function (a, b) { return a - b; });
-
-    el.innerHTML = "";
-
-    // Affichage
-    for (var k = 0; k < keys.length; k++) {
-      var key = keys[k];
-      var date = new Date(parseInt(key, 10));
-
-      var label = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-
-      var block = document.createElement("div");
-      block.className = "day-block";
-
-      var title = document.createElement("div");
-      title.className = "day-title";
-      title.appendChild(document.createTextNode(label));
-      block.appendChild(title);
-
-      // Trier les événements du jour
-      grouped[key].sort(function (a, b) {
-        return a.start - b.start;
-      });
-
-      for (var j = 0; j < grouped[key].length; j++) {
-        var ev2 = grouped[key][j];
-
-        var table = document.createElement("table");
-        var tr1 = document.createElement("tr");
-        var tr2 = document.createElement("tr");
-
-        var tdLeft = document.createElement("td");
-        tdLeft.rowSpan = "2";
-        tdLeft.style.verticalAlign = "top";
-        tdLeft.style.paddingRight = "10px";
-        tdLeft.appendChild(document.createTextNode(ev2.summary));
-
-        var tdRight1 = document.createElement("td");
-        tdRight1.style.textAlign = "right";
-        tdRight1.appendChild(document.createTextNode(formatTime(ev2.start)));
-
-        var tdRight2 = document.createElement("td");
-        tdRight2.style.textAlign = "right";
-        tdRight2.appendChild(document.createTextNode(ev2.end ? formatTime(ev2.end) : ""));
-
-        tr1.appendChild(tdLeft);
-        tr1.appendChild(tdRight1);
-        tr2.appendChild(tdRight2);
-
-        table.appendChild(tr1);
-        table.appendChild(tr2);
-        block.appendChild(table);
-
-        var hr = document.createElement("hr");
-        block.appendChild(hr);
+      for (var d = 0; d < 4; d++) {
+        var day = days[d];
+        if (
+          ev.start.getFullYear() === day.getFullYear() &&
+          ev.start.getMonth() === day.getMonth() &&
+          ev.start.getDate() === day.getDate()
+        ) {
+          groups[d].push(ev);
+        }
       }
-
-      el.appendChild(block);
     }
+
+    function fmt(d) {
+      return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+    }
+
+    function fmtTime(d) {
+      var h = d.getHours(); if (h<10) h="0"+h;
+      var m = d.getMinutes(); if (m<10) m="0"+m;
+      return h+":"+m;
+    }
+
+    var slots = [d1, d2, d3, d4];
+
+    for (var i = 0; i < 4; i++) {
+      var dayEl = slots[i][0];
+      var evEl  = slots[i][1];
+
+      dayEl.textContent = fmt(days[i]);
+      evEl.innerHTML = "";
+
+      var list = groups[i];
+      for (var j = 0; j < list.length; j++) {
+        var ev = list[j];
+        var div = document.createElement("div");
+        div.innerHTML =
+          ev.summary + "<br><span class='small'>" +
+          fmtTime(ev.start) +
+          (ev.end ? " - " + fmtTime(ev.end) : "") +
+          "</span>";
+        evEl.appendChild(div);
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
 })();
