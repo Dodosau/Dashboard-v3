@@ -88,10 +88,7 @@
     }
 
     function fmtDate(d) {
-      var y = d.getFullYear();
-      var m = d.getMonth() + 1;
-      var day = d.getDate();
-      return day + "/" + (m < 10 ? "0" + m : m) + "/" + y;
+      return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
     }
 
     function fmtTime(d) {
@@ -102,15 +99,15 @@
       return h + ":" + m;
     }
 
+    function weekday(d) {
+      var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+      return days[d.getDay()];
+    }
+
     function label(i, d) {
       if (i === 0) return "Aujourd’hui — " + fmtDate(d);
       if (i === 1) return "Demain — " + fmtDate(d);
       return weekday(d) + " — " + fmtDate(d);
-    }
-
-    function weekday(d) {
-      var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-      return days[d.getDay()];
     }
 
     var slots = [d1, d2, d3, d4];
