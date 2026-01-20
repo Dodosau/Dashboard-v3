@@ -13,7 +13,7 @@
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
         var events = parseICS(xhr.responseText);
-        displayGroupedEvents(events);
+        displayEvents(events);
       } else {
         el.innerHTML = "Erreur de chargement : " + xhr.status;
       }
@@ -22,6 +22,9 @@
 
   xhr.send();
 
+  // -----------------------------
+  // PARSE ICS
+  // -----------------------------
   function parseICS(text) {
     var events = [];
     var blocks = text.split("BEGIN:VEVENT");
@@ -30,13 +33,13 @@
       var block = blocks[i];
 
       var summaryMatch = block.match(/SUMMARY:(.+)/);
-      var dtstartMatch = block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/);
-      var dtendMatch = block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/);
+      var startMatch = block.match(/DTSTART(?:;TZID=[^:]+)?:([0-9T]+)/);
+      var endMatch = block.match(/DTEND(?:;TZID=[^:]+)?:([0-9T]+)/);
 
-      if (summaryMatch && dtstartMatch) {
+      if (summaryMatch && startMatch) {
         var summary = summaryMatch[1].trim();
-        var start = parseICSTime(dtstartMatch[1]);
-        var end = dtendMatch ? parseICSTime(dtendMatch[1]) : null;
+        var start = parseICSTime(startMatch[1]);
+        var end = endMatch ? parseICSTime(endMatch[1]) : null;
 
         events.push({ summary: summary, start: start, end: end });
       }
@@ -45,6 +48,9 @@
     return events;
   }
 
+  // -----------------------------
+  // PARSE DATE ICS
+  // -----------------------------
   function parseICSTime(str) {
     return new Date(
       parseInt(str.substring(0, 4), 10),
@@ -55,6 +61,9 @@
     );
   }
 
+  // -----------------------------
+  // FORMAT HEURE
+  // -----------------------------
   function formatTime(date) {
     var h = date.getHours();
     var m = date.getMinutes();
@@ -63,20 +72,26 @@
     return h + ":" + m;
   }
 
-  function displayGroupedEvents(events) {
+  // -----------------------------
+  // AFFICHAGE FILTRÉ
+  // -----------------------------
+  function displayEvents(events) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var maxDate = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
 
+    // Garder seulement aujourd’hui → +3 jours
     events = events.filter(function (ev) {
-      var day = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate());
-      return day >= today && day <= maxDate;
+      var d = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate());
+      return d >= today && d <= maxDate;
     });
 
+    // Supprimer les événements déjà terminés
     events = events.filter(function (ev) {
       return !ev.end || ev.end > now;
     });
 
+    // Regrouper par jour
     var grouped = {};
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
@@ -89,9 +104,11 @@
 
     el.innerHTML = "";
 
+    // Affichage
     for (var k = 0; k < keys.length; k++) {
       var key = keys[k];
       var date = new Date(parseInt(key, 10));
+
       var label = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 
       var block = document.createElement("div");
@@ -102,6 +119,7 @@
       title.appendChild(document.createTextNode(label));
       block.appendChild(title);
 
+      // Trier les événements du jour
       grouped[key].sort(function (a, b) {
         return a.start - b.start;
       });
