@@ -39,7 +39,7 @@ body {
    tous les widgets du dashboard.
 --------------------------------------------------------- */
 .text-large {
-  font-size: 45px;   /* Très visible (ex: heure, température) */
+  font-size: 70px;   /* Très visible (ex: heure, température) */
   font-weight: 600;  /* Semi-gras pour une bonne lisibilité */
 }
 
