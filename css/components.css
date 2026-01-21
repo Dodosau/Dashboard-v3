@@ -32,3 +32,25 @@
   background: rgba(255,255,255,0.1);
   margin: 10px 0;
 }
+
+/* Ligne horizontale */
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px; /* Compatible iPad Air 1 */
+}
+
+/* Colonnes égales */
+.col {
+  flex: 1;
+}
+
+/* Sous-case visuelle */
+.sub-box {
+  background: rgba(255,255,255,0.05);
+  padding: 12px;
+  border-radius: 12px;
+}
+
