@@ -1,22 +1,128 @@
+/* ---------------------------------------------------------
+   RESET DE BASE
+   ---------------------------------------------------------
+   On supprime les marges par défaut et on force le body
+   à occuper toute la hauteur de l’écran.
+--------------------------------------------------------- */
+html, body {
+  height: 100%;
+  margin: 0;
+}
 
-html,body{height:100%;margin:0}
-body{background:#0f1115;color:#fff;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}
-*{box-sizing:border-box}
+/* ---------------------------------------------------------
+   STYLE GLOBAL DU DASHBOARD
+   ---------------------------------------------------------
+   - Fond sombre
+   - Texte blanc
+   - Police compatible iPad / Safari
+--------------------------------------------------------- */
+body {
+  background: #0f1115;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
 
+/* ---------------------------------------------------------
+   BOX-SIZING GLOBAL
+   ---------------------------------------------------------
+   Permet d’éviter les calculs compliqués de largeur/hauteur.
+   Tous les éléments incluent padding + border dans leur taille.
+--------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------
+   TAILLES DE TEXTE GLOBALES
+   ---------------------------------------------------------
+   Ces classes permettent d’unifier la typographie sur
+   tous les widgets du dashboard.
+--------------------------------------------------------- */
 .text-large {
-  font-size: 70px;
-  font-weight: 600;
+  font-size: 45px;   /* Très visible (ex: heure, température) */
+  font-weight: 600;  /* Semi-gras pour une bonne lisibilité */
 }
 
 .text-medium {
-  font-size: 22px;
+  font-size: 22px;   /* Sous-titres, valeurs secondaires */
+  font-weight: 400;
 }
 
 .text-small {
-  font-size: 16px;
+  font-size: 16px;   /* Labels, dates, heures d’événements */
+  font-weight: 400;
 }
 
 .text-tiny {
-  font-size: 12px;
+  font-size: 12px;   /* Détails très discrets */
   opacity: 0.8;
+  font-weight: 300;
+}
+
+/* ---------------------------------------------------------
+   ALIGNEMENT HORIZONTAL DU TEXTE
+   ---------------------------------------------------------
+   Similaire à Word : gauche / centre / droite.
+--------------------------------------------------------- */
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------
+   ALIGNEMENT VERTICAL DANS UN BLOC
+   ---------------------------------------------------------
+   Nécessite que le parent devienne un conteneur flex.
+   Permet de coller le contenu en haut, centrer, ou en bas.
+--------------------------------------------------------- */
+.v-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Collé en haut */
+}
+
+.v-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centré verticalement */
+}
+
+.v-bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Collé en bas */
+}
+
+/* ---------------------------------------------------------
+   POSITIONNEMENT DANS LA FENÊTRE
+   ---------------------------------------------------------
+   Permet de placer un widget en haut, au centre ou en bas
+   de l’écran, indépendamment du reste.
+--------------------------------------------------------- */
+.window-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.window-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centre parfait */
+}
+
+.window-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
