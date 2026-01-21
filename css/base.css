@@ -38,8 +38,13 @@ body {
    Ces classes permettent d’unifier la typographie sur
    tous les widgets du dashboard.
 --------------------------------------------------------- */
+.text-huge {
+  font-size: 90px;   /* Très visible (ex: heure, température) */
+  font-weight: 600;  /* Semi-gras pour une bonne lisibilité */
+}
+
 .text-large {
-  font-size: 70px;   /* Très visible (ex: heure, température) */
+  font-size: 45px;   /* Très visible (ex: heure, température) */
   font-weight: 600;  /* Semi-gras pour une bonne lisibilité */
 }
 
