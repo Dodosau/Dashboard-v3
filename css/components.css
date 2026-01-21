@@ -3,3 +3,32 @@
 .title{font-weight:800;font-size:18px;margin:0 0 10px}
 .small{color:#a7b0c0;font-size:15px}
 .temp{font-size:42px;font-weight:800}
+
+/* Sous-case générique */
+.sub-box {
+  background: rgba(255,255,255,0.05);
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* Ligne horizontale */
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Colonne verticale */
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Séparateur visuel */
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 10px 0;
+}
