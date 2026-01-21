@@ -2,3 +2,21 @@
 html,body{height:100%;margin:0}
 body{background:#0f1115;color:#fff;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}
 *{box-sizing:border-box}
+
+.text-large {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.text-medium {
+  font-size: 22px;
+}
+
+.text-small {
+  font-size: 16px;
+}
+
+.text-tiny {
+  font-size: 12px;
+  opacity: 0.8;
+}
