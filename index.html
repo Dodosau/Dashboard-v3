@@ -2,28 +2,68 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
+
+  <!-- Titre affiché dans l’onglet -->
   <title>Dashboard</title>
+
+  <!-- Assure un bon rendu sur iPad / iPhone / mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Permet d’ajouter le dashboard en mode "app" sur iPad/iPhone -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
+
+  <!-- CSS de base, layout et composants -->
+  <!-- On leur donne un ID pour pouvoir modifier dynamiquement l’URL -->
+  <link id="cssBase" rel="stylesheet" href="css/base.css">
+  <link id="cssLayout" rel="stylesheet" href="css/layout.css">
+  <link id="cssComponents" rel="stylesheet" href="css/components.css">
+
+  <script>
+    /*
+      Safari iPad met TOUT en cache, même après un refresh.
+      Pour forcer Safari à recharger les CSS, on ajoute un paramètre unique
+      (basé sur Date.now()) à chaque chargement de la page.
+
+      Résultat :
+      - Toujours la dernière version du CSS
+      - Plus besoin de recharger manuellement
+      - Fonctionne sur Chrome, Safari, iPad, etc.
+    */
+    var v = Date.now();
+    document.getElementById("cssBase").href = "css/base.css?v=" + v;
+    document.getElementById("cssLayout").href = "css/layout.css?v=" + v;
+    document.getElementById("cssComponents").href = "css/components.css?v=" + v;
+  </script>
 </head>
+
 <body>
+
+  <!-- Conteneur principal du dashboard -->
   <div class="container">
+
+    <!-- Colonne de gauche : widgets verticaux -->
     <div class="leftCol">
+      <!-- Chaque widget est chargé automatiquement par include.js -->
       <div data-widget="clock"></div>
       <div data-widget="weather"></div>
       <div data-widget="wedding"></div>
       <div data-widget="bus"></div>
     </div>
+
+    <!-- Colonne de droite : calendrier -->
     <div class="rightCol">
       <div data-widget="calendar"></div>
     </div>
+
   </div>
 
+  <!-- Fichiers JS principaux -->
+  <!-- config.js : paramètres globaux -->
+  <!-- include.js : charge les widgets HTML + JS -->
+  <!-- app.js : logique générale du dashboard -->
   <script src="js/config.js"></script>
   <script src="js/include.js"></script>
   <script src="js/app.js"></script>
+
 </body>
 </html>
