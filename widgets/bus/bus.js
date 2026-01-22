@@ -22,35 +22,31 @@
   function init() {
     var busNext = document.getElementById("busNext");
     var busNext2 = document.getElementById("busNext2");
-    var busUpdated = document.getElementById("busUpdated");
-    var busIcon = document.getElementById("busIcon");
 
-    if (!busNext || !busNext2 || !busUpdated || !busIcon) {
+    if (!busNext || !busNext2) {
       return;
     }
 
-    var cfg = window.DASH_CONFIG.bus || {};
-    var url = cfg.url ||
-      "https://dodosau.github.io/STM/api/next55-two-52103.json";
-
-    var refreshMs = cfg.refreshMs || 30000; // 30 sec
+    var cfg = window.DASH_CONFIG.stm;
+    var url = cfg.apiNext55Two;
+    var refreshMs = cfg.refreshMs || 60000;
 
     function refresh() {
       xhr(url, function (err, d) {
         if (err || !d || !d.ok) {
           busNext.textContent = "—";
           busNext2.textContent = "—";
-          busUpdated.textContent = "Erreur";
           return;
         }
 
-        busNext.textContent = d.nextBusMinutes + " min";
-        busNext2.textContent = d.nextBus2Minutes + " min";
+        var now = Date.now();
 
-        var dt = new Date(d.generatedAtUnix * 1000);
-        busUpdated.textContent =
-          dt.getHours().toString().padStart(2, "0") + ":" +
-          dt.getMinutes().toString().padStart(2, "0");
+        // Minutes restantes basées sur l’heure d’arrivée prévue
+        var m1 = Math.max(0, Math.floor((d.departureTimeUnix * 1000 - now) / 60000));
+        var m2 = Math.max(0, Math.floor((d.departure2TimeUnix * 1000 - now) / 60000));
+
+        busNext.textContent = m1 + " min";
+        busNext2.textContent = m2 + " min";
       });
     }
 
