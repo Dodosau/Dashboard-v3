@@ -1,43 +1,48 @@
-name: Fetch STM Bus
+name: STM GTFS-RT fetch
 
 on:
-  # Exécution automatique toutes les 2 minutes
   schedule:
-    - cron: "*/2 * * * *"
-
-  # Exécution manuelle
+    - cron: "*/5 * * * *" # toutes les 5 minutes
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  fetch:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      # Récupération du repo
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Installation de Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # Installation des dépendances
-      - name: Install dependencies
+      - name: Install deps (si besoin)
         run: npm install
+        # ou rien si tu n'as pas de package.json
 
-      # Exécution du script STM
-      - name: Fetch STM bus data
+      - name: Run STM fetch script
         env:
           STM_API_KEY: ${{ secrets.STM_API_KEY }}
-        run: node scripts/fetchBus.js
+        run: node scripts/fetch-stm.mjs
 
-      # Commit automatique du fichier bus.json
-      - name: Commit bus.json
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/bus.json
-          git commit -m "Update bus.json" || echo "No changes"
-          git push
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
