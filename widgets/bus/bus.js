@@ -1,48 +1,62 @@
 (function () {
 
+  function xhr(url, cb) {
+    var r = new XMLHttpRequest();
+    r.onreadystatechange = function () {
+      if (r.readyState === 4) {
+        if (r.status === 200) {
+          try {
+            cb(null, JSON.parse(r.responseText));
+          } catch (e) {
+            cb(e);
+          }
+        } else {
+          cb(new Error("HTTP " + r.status));
+        }
+      }
+    };
+    r.open("GET", url, true);
+    r.send();
+  }
+
   function init() {
-    fetch("data/bus.json?v=" + Date.now())
-      .then(r => r.json())
-      .then(showBus)
-      .catch(err => {
-        console.error("Erreur bus:", err);
-        document.getElementById("busBox").textContent = "Erreur de chargement";
+    var busNext = document.getElementById("busNext");
+    var busNext2 = document.getElementById("busNext2");
+    var busUpdated = document.getElementById("busUpdated");
+    var busIcon = document.getElementById("busIcon");
+
+    if (!busNext || !busNext2 || !busUpdated || !busIcon) {
+      return;
+    }
+
+    var cfg = window.DASH_CONFIG.bus || {};
+    var url = cfg.url ||
+      "https://dodosau.github.io/STM/api/next55-two-52103.json";
+
+    var refreshMs = cfg.refreshMs || 30000; // 30 sec
+
+    function refresh() {
+      xhr(url, function (err, d) {
+        if (err || !d || !d.ok) {
+          busNext.textContent = "—";
+          busNext2.textContent = "—";
+          busUpdated.textContent = "Erreur";
+          return;
+        }
+
+        busNext.textContent = d.nextBusMinutes + " min";
+        busNext2.textContent = d.nextBus2Minutes + " min";
+
+        var dt = new Date(d.generatedAtUnix * 1000);
+        busUpdated.textContent =
+          dt.getHours().toString().padStart(2, "0") + ":" +
+          dt.getMinutes().toString().padStart(2, "0");
       });
-  }
-
-  function showBus(data) {
-    var box = document.getElementById("busBox");
-    if (!box) return;
-
-    // Si le JSON est vide ou invalide
-    if (!data || !data.arrival) {
-      box.textContent = "Aucun bus trouvé";
-      return;
     }
 
-    // Timestamp actuel (en secondes)
-    var now = Math.floor(Date.now() / 1000);
-
-    // Différence en secondes
-    var diff = data.arrival - now;
-
-    if (diff <= 0) {
-      box.textContent = "Bus en approche";
-      return;
-    }
-
-    // Conversion en minutes
-    var minutes = Math.floor(diff / 60);
-
-    // Affichage final
-    box.innerHTML =
-      "<div class='title'>Bus " + data.routeId + "</div>" +
-      "<div class='temp'>" + minutes + " min</div>" +
-      "<div class='small'>Arrêt " + data.stopId + "</div>";
+    refresh();
+    setInterval(refresh, refreshMs);
   }
-
-  // Mise à jour toutes les 30 secondes
-  setInterval(init, 30000);
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
