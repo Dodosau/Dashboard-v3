@@ -3,5 +3,7 @@
   "routeId": "55",
   "stopId": "52103",
   "nextBusMinutes": null,
-  "nextBus2Minutes": null
+  "nextBus2Minutes": null,
+  "message": "No realtime data and cache expired",
+  "generatedAtUnix": 1769098314
 }
