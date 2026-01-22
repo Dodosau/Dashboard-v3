@@ -45,8 +45,14 @@
         var m1 = Math.max(0, Math.floor((d.departureTimeUnix * 1000 - now) / 60000));
         var m2 = Math.max(0, Math.floor((d.departure2TimeUnix * 1000 - now) / 60000));
 
-        busNext.textContent = m1 + " min";
-        busNext2.textContent = m2 + " min";
+        // 🔥 Décalage automatique si le premier bus est passé
+        if (m1 <= 0) {
+          m1 = m2;
+          m2 = null;
+        }
+
+        busNext.textContent = m1 != null ? m1 + " min" : "—";
+        busNext2.textContent = m2 != null ? m2 + " min" : "—";
       });
     }
 
