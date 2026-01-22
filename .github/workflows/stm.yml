@@ -2,7 +2,7 @@ name: Fetch STM Bus
 
 on:
   schedule:
-    - cron: "*/2 * * * *"   # toutes les 2 minutes
+    - cron: "*/2 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,37 +13,18 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install jq
-        run: sudo apt-get install -y jq
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-      - name: Fetch STM GTFS-RT Trip Updates
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fetch STM data
         env:
           STM_API_KEY: ${{ secrets.STM_API_KEY }}
-        run: |
-          # Télécharge les données GTFS-RT (format Protobuf → JSON)
-          curl -H "apikey: $STM_API_KEY" \
-               "https://api.stm.info/pub/od/gtfs-rt/ic/v1/trip-updates" \
-               | jq '.' > raw.json
-
-      - name: Extract next bus for route 55 at stop 52103
-        run: |
-          # On filtre les données pour ne garder que :
-          # - routeId = 55
-          # - stopId = 52103
-          # - le prochain passage
-          jq '
-            .entity[]
-            | select(.tripUpdate.trip.routeId == "55")
-            | .tripUpdate.stopTimeUpdate[]
-            | select(.stopId == "52103")
-            | {
-                routeId: "55",
-                stopId: "52103",
-                arrival: (.arrival.time // 0),
-                departure: (.departure.time // 0)
-              }
-          ' raw.json \
-          | jq -s 'sort_by(.arrival) | .[0]' > data/bus.json
+        run: node scripts/fetchBus.js
 
       - name: Commit updated bus.json
         run: |
