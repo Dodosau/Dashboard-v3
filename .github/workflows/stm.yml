@@ -1,8 +1,11 @@
 name: Fetch STM Bus
 
 on:
+  # Exécution automatique toutes les 2 minutes
   schedule:
     - cron: "*/2 * * * *"
+
+  # Exécution manuelle
   workflow_dispatch:
 
 jobs:
@@ -10,22 +13,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Récupération du repo
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # Installation de Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # Installation des dépendances
       - name: Install dependencies
         run: npm install
 
+      # Exécution du script STM
       - name: Fetch STM bus data
         env:
           STM_API_KEY: ${{ secrets.STM_API_KEY }}
         run: node scripts/fetchBus.js
 
+      # Commit automatique du fichier bus.json
       - name: Commit bus.json
         run: |
           git config user.name "github-actions"
