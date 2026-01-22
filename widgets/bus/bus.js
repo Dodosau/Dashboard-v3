@@ -1,5 +1,6 @@
 (function () {
 
+  // --- Utilitaire AJAX ---
   function xhr(url, cb) {
     var r = new XMLHttpRequest();
     r.onreadystatechange = function () {
@@ -19,6 +20,7 @@
     r.send();
   }
 
+  // --- Coloration générique des sous-cases ---
   function applyColor(box, minutes) {
     box.classList.remove("color-green", "color-orange", "color-red");
 
@@ -31,6 +33,7 @@
     }
   }
 
+  // --- Initialisation du widget ---
   function init() {
     var busNext = document.getElementById("busNext");
     var busNext2 = document.getElementById("busNext2");
@@ -55,17 +58,21 @@
 
         var now = Date.now();
 
+        // Minutes restantes basées sur l’heure d’arrivée prévue
         var m1 = Math.max(0, Math.floor((d.departureTimeUnix * 1000 - now) / 60000));
         var m2 = Math.max(0, Math.floor((d.departure2TimeUnix * 1000 - now) / 60000));
 
+        // --- Décalage automatique si le premier bus est passé ---
         if (m1 <= 0) {
           m1 = m2;
           m2 = null;
         }
 
+        // --- Affichage ---
         busNext.textContent = m1 != null ? m1 + " min" : "—";
         busNext2.textContent = m2 != null ? m2 + " min" : "—";
 
+        // --- Coloration ---
         if (m1 != null) applyColor(box1, m1);
         if (m2 != null) applyColor(box2, m2);
       });
@@ -75,6 +82,7 @@
     setInterval(refresh, refreshMs);
   }
 
+  // --- Lancement ---
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
