@@ -69,3 +69,24 @@
   background: rgba(255,255,255,0.1);
   margin: 10px 0;
 }
+
+
+/* ---------------------------------------------------------
+   COULEURS SOUS CASES
+--------------------------------------------------------- */
+
+/* Couleurs génériques pour toutes les sous-cases */
+.sub-box.color-green {
+  background-color: #2ecc71 !important;
+  color: white !important;
+}
+
+.sub-box.color-orange {
+  background-color: #f39c12 !important;
+  color: white !important;
+}
+
+.sub-box.color-red {
+  background-color: #e74c3c !important;
+  color: white !important;
+}
