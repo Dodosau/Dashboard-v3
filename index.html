@@ -1,104 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
 
   <title>Dashboard</title>
 
-  <!-- Feuilles de style (chargées avec timestamp pour éviter le cache) -->
-  <link id="cssBase" rel="stylesheet" href="">
-  <link id="cssLayout" rel="stylesheet" href="">
-  <link id="cssComponents" rel="stylesheet" href="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
-  <style>
-    body {
-      background: #0f1116;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-  </style>
+  <!-- CSS -->
+  <link id="cssBase" rel="stylesheet" href="css/base.css">
+  <link id="cssLayout" rel="stylesheet" href="css/layout.css">
+  <link id="cssComponents" rel="stylesheet" href="css/components.css">
+
+  <script>
+    /*
+      Safari iPad met TOUT en cache.
+      On ajoute un timestamp aux CSS pour forcer le rechargement.
+    */
+    var v = Date.now();
+    document.getElementById("cssBase").href = "css/base.css?v=" + v;
+    document.getElementById("cssLayout").href = "css/layout.css?v=" + v;
+    document.getElementById("cssComponents").href = "css/components.css?v=" + v;
+  </script>
 </head>
 
 <body>
 
-  <!-- Conteneur principal -->
-  <div id="dashboard">
+  <div class="container">
 
-    <!-- Widgets (chargés dynamiquement avec timestamp) -->
-    <div id="widgetClock"></div>
-    <div id="widgetWeather"></div>
-    <div id="widgetCalendar"></div>
-    <div id="widgetBus"></div>
-    <div id="widgetWedding"></div>
+    <div class="leftCol">
+      <div data-widget="clock"></div>
+      <div data-widget="weather"></div>
+      <div data-widget="wedding"></div>
+      <div data-widget="bus"></div>
+    </div>
+
+    <div class="rightCol">
+      <div data-widget="calendar"></div>
+    </div>
 
   </div>
 
-  <!-- Scripts JS (chargés dynamiquement avec timestamp) -->
-  <script id="jsClock" src=""></script>
-  <script id="jsWeather" src=""></script>
-  <script id="jsCalendar" src=""></script>
-  <script id="jsBus" src=""></script>
-  <script id="jsWedding" src=""></script>
+  <!-- JS principaux -->
+  <script id="jsConfig" src="js/config.js"></script>
+  <script id="jsInclude" src="js/include.js"></script>
+  <script id="jsApp" src="js/app.js"></script>
 
   <script>
-    /* ---------------------------------------------------------
-       CACHE-BUSTING GLOBAL
-       Ajoute ?v=timestamp à TOUT (CSS, JS, HTML)
-       Safari iPad ne peut plus garder une vieille version
-    --------------------------------------------------------- */
-    const v = Date.now();
+    /*
+      🔥 Cache-busting JS
+      Même principe que pour les CSS : Safari recharge toujours la dernière version.
+    */
+    document.getElementById("jsConfig").src = "js/config.js?v=" + v;
+    document.getElementById("jsInclude").src = "js/include.js?v=" + v;
+    document.getElementById("jsApp").src = "js/app.js?v=" + v;
 
-    // CSS
-    document.getElementById("cssBase").href =
-      "css/base.css?v=" + v;
-    document.getElementById("cssLayout").href =
-      "css/layout.css?v=" + v;
-    document.getElementById("cssComponents").href =
-      "css/components.css?v=" + v;
-
-    // JS
-    document.getElementById("jsClock").src =
-      "widgets/clock/clock.js?v=" + v;
-    document.getElementById("jsWeather").src =
-      "widgets/weather/weather.js?v=" + v;
-    document.getElementById("jsCalendar").src =
-      "widgets/calendar/calendar.js?v=" + v;
-    document.getElementById("jsBus").src =
-      "widgets/bus/bus.js?v=" + v;
-    document.getElementById("jsWedding").src =
-      "widgets/wedding/wedding.js?v=" + v;
-
-    /* ---------------------------------------------------------
-       CHARGEMENT DES WIDGETS HTML AVEC TIMESTAMP
-       (évite que Safari garde une ancienne version)
-    --------------------------------------------------------- */
-    function loadWidget(id, file) {
-      fetch(file + "?v=" + v)
-        .then(r => r.text())
-        .then(html => {
-          document.getElementById(id).innerHTML = html;
-        });
-    }
-
-    loadWidget("widgetClock", "widgets/clock/clock.html");
-    loadWidget("widgetWeather", "widgets/weather/weather.html");
-    loadWidget("widgetCalendar", "widgets/calendar/calendar.html");
-    loadWidget("widgetBus", "widgets/bus/bus.html");
-    loadWidget("widgetWedding", "widgets/wedding/wedding.html");
-
-    /* ---------------------------------------------------------
-       AUTO-REFRESH INTELLIGENT
-       Recharge la page toutes les 5 minutes
-       → garantit que tout reste à jour
-       → sans casser les widgets
-    --------------------------------------------------------- */
-    setTimeout(() => {
+    /*
+      🔄 Auto-refresh intelligent
+      Recharge la page toutes les 5 minutes.
+      - Ne casse pas include.js
+      - Recharge les widgets
+      - Recharge les CSS/JS avec un nouveau timestamp
+    */
+    setTimeout(function () {
       location.reload();
     }, 300000); // 300000 ms = 5 minutes
-
   </script>
 
 </body>
