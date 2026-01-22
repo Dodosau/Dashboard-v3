@@ -1,32 +1,69 @@
-
-.card{background:#171a21;border-radius:18px;padding:20px}
-.title{font-weight:800;font-size:18px;margin:0 0 10px}
-.small{color:#a7b0c0;font-size:15px}
-.temp{font-size:42px;font-weight:800}
-
-/* Sous-case générique */
-.sub-box {
-  background: rgba(255,255,255,0.05);
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
+/* ---------------------------------------------------------
+   STYLE DES CARTES (widgets)
+--------------------------------------------------------- */
+.card {
+  background: #171a21;
+  border-radius: 18px;
+  padding: 20px;
 }
 
-/* Ligne horizontale */
+/* ---------------------------------------------------------
+   TITRES ET TEXTES SPÉCIFIQUES AUX WIDGETS
+--------------------------------------------------------- */
+.title {
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.small {
+  color: #a7b0c0;
+  font-size: 15px;
+}
+
+.temp {
+  font-size: 42px;
+  font-weight: 800;
+}
+
+/* ---------------------------------------------------------
+   SOUS-CASES (sub-box)
+   Utilisées pour créer des blocs internes dans un widget.
+--------------------------------------------------------- */
+.sub-box {
+  background: rgba(255,255,255,0.05);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;              /* permet d'étirer le contenu */
+  flex-direction: column;
+  flex: 1;                    /* largeur flexible */
+}
+
+/* ---------------------------------------------------------
+   LIGNES HORIZONTALES (row)
+   Permet de mettre plusieurs sous-cases côte à côte.
+   align-items: stretch = même hauteur pour toutes les cases.
+--------------------------------------------------------- */
 .row {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  gap: 12px;                  /* espace entre les sous-cases */
+  align-items: stretch;       /* 🔥 égalise automatiquement les hauteurs */
 }
 
-/* Colonne verticale */
+/* ---------------------------------------------------------
+   COLONNES INTERNES (col)
+   Permet d'organiser le contenu verticalement dans une sous-case.
+--------------------------------------------------------- */
 .col {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
-/* Séparateur visuel */
+/* ---------------------------------------------------------
+   SÉPARATEUR VISUEL
+--------------------------------------------------------- */
 .divider {
   height: 1px;
   background: rgba(255,255,255,0.1);
