@@ -1,35 +1,4 @@
-name: Fetch STM Bus
-
-on:
-  schedule:
-    - cron: "*/2 * * * *"
-  workflow_dispatch:
-
-jobs:
-  fetch:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Fetch STM data
+      - name: Test STM fetch
         env:
           STM_API_KEY: ${{ secrets.STM_API_KEY }}
-        run: node scripts/fetchBus.js
-
-      - name: Commit updated bus.json
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/bus.json
-          git commit -m "Update STM bus data" || echo "No changes"
-          git push
+        run: node scripts/testStmFetch.js
