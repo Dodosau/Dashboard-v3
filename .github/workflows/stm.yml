@@ -1,6 +1,8 @@
-name: STM Fetch & Decode
+name: Fetch STM Bus
 
 on:
+  schedule:
+    - cron: "*/2 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -19,18 +21,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Fetch STM raw data
+      - name: Fetch STM bus data
         env:
           STM_API_KEY: ${{ secrets.STM_API_KEY }}
-        run: node scripts/testStmFetch.js
+        run: node scripts/fetchBus.js
 
-      - name: Commit raw STM file
+      - name: Commit bus.json
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add data/stm_raw.bin
-          git commit -m "Update raw STM data" || echo "No changes"
+          git add data/bus.json
+          git commit -m "Update bus.json" || echo "No changes"
           git push
-
-      - name: Decode STM data
-        run: node scripts/decodeBus.js
