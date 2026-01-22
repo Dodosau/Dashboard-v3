@@ -9,38 +9,22 @@ message FeedMessage {
 
 message FeedHeader {
   required string gtfs_realtime_version = 1;
-  optional Incrementality incrementality = 2 [default = FULL_DATASET];
-  optional uint64 timestamp = 3;
-
-  enum Incrementality {
-    FULL_DATASET = 0;
-    DIFFERENTIAL = 1;
-  }
+  optional uint64 timestamp = 2;
 }
 
 message FeedEntity {
   required string id = 1;
-  optional bool is_deleted = 2 [default = false];
-  optional TripUpdate trip_update = 3;
-  optional VehiclePosition vehicle = 4;
-  optional Alert alert = 5;
+  optional TripUpdate trip_update = 2;
 }
 
 message TripUpdate {
   required TripDescriptor trip = 1;
-  optional VehicleDescriptor vehicle = 3;
   repeated StopTimeUpdate stop_time_update = 2;
-  optional uint64 timestamp = 4;
-  optional uint32 delay = 5;
 }
 
 message TripDescriptor {
   optional string trip_id = 1;
-  optional string route_id = 5;
-}
-
-message VehicleDescriptor {
-  optional string id = 1;
+  optional string route_id = 2;
 }
 
 message StopTimeUpdate {
@@ -50,6 +34,5 @@ message StopTimeUpdate {
 }
 
 message StopTimeEvent {
-  optional int32 delay = 1;
-  optional uint64 time = 2;
+  optional uint64 time = 1;
 }
