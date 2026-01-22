@@ -4,13 +4,16 @@ window.DASH_CONFIG = {
 
   wedding: { dateISO: "2026-06-17" },
 
-  stm: {
-    stopId: "52103",
-    // IMPORTANT: tu utilises /api/next55 (d’après ton test)
-    apiNext55Two: "https://stm-bus.doriansauzede.workers.dev/api/next55",
-    refreshMs: 60000,
-    cooldownOnErrorMs: 180000
-  },
+stm: {
+  stopId: "52103",
+
+  // Nouveau backend statique GitHub Pages
+  apiNext55Two: "https://dodosau.github.io/STM/api/next55-two-52103.json",
+
+  refreshMs: 60000,         // rafraîchit toutes les 60s dans ton dashboard
+  cooldownOnErrorMs: 180000 // si erreur, attend 3 min avant retry
+},
+
 
   weather: {
     latitude: 45.5017,
