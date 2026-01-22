@@ -1,22 +1,25 @@
 import fetch from "node-fetch";
 import fs from "fs";
-import GtfsRealtimeBindings from "gtfs-realtime-bindings";
+import protobuf from "protobufjs";
 
 const API_KEY = process.env.STM_API_KEY;
 
 async function fetchBus() {
   try {
+    // Charger le fichier .proto
+    const root = await protobuf.load("protos/gtfs-realtime.proto");
+    const FeedMessage = root.lookupType("transit_realtime.FeedMessage");
+
+    // Appel API STM
     const response = await fetch(
       "https://api.stm.info/pub/od/gtfs-rt/ic/v1/trip-updates",
-      {
-        headers: { apikey: API_KEY }
-      }
+      { headers: { apikey: API_KEY } }
     );
 
-    const buffer = await response.arrayBuffer();
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-      new Uint8Array(buffer)
-    );
+    const buffer = new Uint8Array(await response.arrayBuffer());
+
+    // Décodage Protobuf → JSON
+    const feed = FeedMessage.decode(buffer);
 
     const routeId = "55";
     const stopId = "52103";
@@ -24,18 +27,15 @@ async function fetchBus() {
     let results = [];
 
     for (const entity of feed.entity) {
-      if (!entity.tripUpdate) continue;
+      if (!entity.trip_update) continue;
 
-      const trip = entity.tripUpdate.trip;
-      if (trip.routeId !== routeId) continue;
+      const trip = entity.trip_update.trip;
+      if (trip.route_id !== routeId) continue;
 
-      for (const stu of entity.tripUpdate.stopTimeUpdate) {
-        if (stu.stopId === stopId) {
+      for (const stu of entity.trip_update.stop_time_update) {
+        if (stu.stop_id === stopId) {
           results.push({
-            routeId,
-            stopId,
-            arrival: stu.arrival?.time || null,
-            departure: stu.departure?.time || null
+            arrival: stu.arrival?.time || null
           });
         }
       }
@@ -46,7 +46,6 @@ async function fetchBus() {
       return;
     }
 
-    // Trier par heure d’arrivée
     results.sort((a, b) => a.arrival - b.arrival);
 
     const now = Math.floor(Date.now() / 1000);
@@ -64,9 +63,7 @@ async function fetchBus() {
         : null
     };
 
-    if (!fs.existsSync("data")) {
-      fs.mkdirSync("data");
-    }
+    if (!fs.existsSync("data")) fs.mkdirSync("data");
 
     fs.writeFileSync("data/bus.json", JSON.stringify(output, null, 2));
 
