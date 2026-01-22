@@ -10,7 +10,7 @@ async function testFetch() {
       process.exit(1);
     }
 
-    const url = "https://api.stm.info/pub/od/gtfs-rt/ic/v1/trip-updates";
+    const url = "https://api.stm.info/pub/od/gtfs-rt/ic/v2/tripUpdates";
 
     console.log("Appel STM:", url);
 
