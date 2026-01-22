@@ -1,6 +1,10 @@
 (function () {
 
+  /* ---------------------------------------------------------
+     POINT D’ENTRÉE : initialise le widget
+  --------------------------------------------------------- */
   function init() {
+    // Récupère les éléments HTML pour les 4 jours
     var d1 = document.getElementById("calDay1");
     var e1 = document.getElementById("calEvents1");
     var d2 = document.getElementById("calDay2");
@@ -10,17 +14,23 @@
     var d4 = document.getElementById("calDay4");
     var e4 = document.getElementById("calEvents4");
 
+    // Si le widget n’est pas encore chargé → on arrête
     if (!d1 || !e1) return;
 
+    // Charge le fichier ICS puis affiche les événements
     loadICS(function (events) {
       render(events, [d1, e1], [d2, e2], [d3, e3], [d4, e4]);
+      hideEmptyDays(); // 🔥 Cache les sous-cases vides
     });
   }
 
+  /* ---------------------------------------------------------
+     CHARGEMENT DU FICHIER ICS (avec anti-cache Safari)
+  --------------------------------------------------------- */
   function loadICS(cb) {
     var xhr = new XMLHttpRequest();
 
-    // Empêche Safari de garder une vieille version en cache
+    // Ajout d’un timestamp pour forcer Safari à recharger le fichier
     var url = "https://dodosau.github.io/Dashboard-v3/calendar.ics?v=" + Date.now();
 
     xhr.open("GET", url, true);
@@ -34,6 +44,9 @@
     xhr.send();
   }
 
+  /* ---------------------------------------------------------
+     PARSE DU FICHIER ICS → extraction des événements
+  --------------------------------------------------------- */
   function parseICS(text) {
     var events = [];
     var blocks = text.split("BEGIN:VEVENT");
@@ -57,6 +70,9 @@
     return events;
   }
 
+  /* ---------------------------------------------------------
+     CONVERSION D’UNE DATE ICS → objet Date JS
+  --------------------------------------------------------- */
   function parseICSTime(str) {
     return new Date(
       parseInt(str.substring(0, 4), 10),
@@ -67,22 +83,27 @@
     );
   }
 
+  /* ---------------------------------------------------------
+     AFFICHAGE DES ÉVÉNEMENTS DANS LES 4 SOUS-CASES
+  --------------------------------------------------------- */
   function render(events, d1, d2, d3, d4) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
+    // Les 4 jours à afficher : aujourd’hui + 3 jours
     var days = [];
     for (var i = 0; i < 4; i++) {
       days.push(new Date(today.getTime() + i * 86400000));
     }
 
+    // Tableau contenant les événements groupés par jour
     var groups = [[], [], [], []];
 
-    // Filtrer les événements passés
+    // Filtre les événements passés et les classe par jour
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
 
-      // Si l'événement est terminé → on ignore
+      // Ignore les événements déjà terminés
       if (ev.end && ev.end < now) continue;
 
       for (var d = 0; d < 4; d++) {
@@ -97,6 +118,9 @@
       }
     }
 
+    /* ------------------------------
+       Fonctions utilitaires
+    ------------------------------ */
     function fmtDate(d) {
       var dd = d.getDate();
       var mm = d.getMonth() + 1;
@@ -124,25 +148,27 @@
       return weekday(d) + " — " + fmtDate(d);
     }
 
+    /* ------------------------------
+       Injection dans le HTML
+    ------------------------------ */
     var slots = [d1, d2, d3, d4];
 
     for (var i = 0; i < 4; i++) {
       var dayEl = slots[i][0];
       var evEl = slots[i][1];
 
+      // Titre du jour
       dayEl.textContent = label(i, days[i]);
+
+      // Reset des événements
       evEl.innerHTML = "";
 
       var list = groups[i];
 
-      if (list.length === 0) {
-        var empty = document.createElement("div");
-        empty.className = "small";
-        empty.textContent = "Aucun événement";
-        evEl.appendChild(empty);
-        continue;
-      }
+      // Si aucun événement → on laisse vide (sera caché ensuite)
+      if (list.length === 0) continue;
 
+      // Ajout des événements
       for (var j = 0; j < list.length; j++) {
         var ev = list[j];
 
@@ -164,9 +190,34 @@
     }
   }
 
-  // 🔄 Auto-refresh toutes les 60 secondes
+  /* ---------------------------------------------------------
+     CACHE LES SOUS-CASES QUI N’ONT AUCUN ÉVÉNEMENT
+  --------------------------------------------------------- */
+  function hideEmptyDays() {
+    for (var i = 1; i <= 4; i++) {
+      var events = document.getElementById("calEvents" + i);
+      var box = document.getElementById("dayBox" + i);
+
+      // Si la sous-case existe
+      if (events && box) {
+        // Si aucun événement → on cache la sous-case
+        if (events.innerHTML.trim() === "") {
+          box.style.display = "none";
+        } else {
+          box.style.display = "block";
+        }
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------
+     AUTO-REFRESH TOUTES LES 60 SECONDES
+  --------------------------------------------------------- */
   setInterval(init, 60000);
 
+  /* ---------------------------------------------------------
+     LANCEMENT AU CHARGEMENT DE LA PAGE
+  --------------------------------------------------------- */
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
