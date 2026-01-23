@@ -2,9 +2,16 @@
   "ok": true,
   "route": "55",
   "stop": "52103",
-  "updatedAtUnix": 1769172738,
+  "updatedAtUnix": 1769173107,
   "nextMinutes": [],
   "nextUnix": [],
+  "filterUsed": "fallback: no route match, used stop-only",
+  "debug": {
+    "candidatesCountForStop": 0,
+    "sampleCandidates": [],
+    "topStops": [],
+    "topRouteIds": []
+  },
   "source": "stm-gtfs-rt tripUpdates",
   "error": null
 }
