@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-// =====================
-// Config (à adapter si besoin)
-// =====================
 const STM_API_KEY = process.env.STM_API_KEY;
 if (!STM_API_KEY) {
   console.error("Missing STM_API_KEY");
@@ -12,18 +9,16 @@ if (!STM_API_KEY) {
 
 const UPSTREAM_URL = "https://api.stm.info/pub/od/gtfs-rt/ic/v2/tripUpdates";
 
-// Ton besoin: ligne 55, stop 52103, 3 prochains bus
-const ROUTE_ID = "55";
-const STOP_ID = "52103";
+// Ce que TU veux
+const DESIRED_ROUTE = "55";
+const DESIRED_STOP = "52103";
 const N_NEXT = 3;
 
 // Sortie
 const OUT_DIR = path.join(process.cwd(), "data");
 const OUT_FILE = path.join(OUT_DIR, "prochainBus55.json");
 
-// =====================
-// Safe fetch bytes (protobuf)
-// =====================
+// -------- safe fetch (protobuf bytes)
 async function safeFetchBytes(url, opts = {}) {
   const timeoutMs = opts.timeoutMs ?? 5000;
   const maxBytes = opts.maxBytes ?? 2_500_000;
@@ -44,17 +39,13 @@ async function safeFetchBytes(url, opts = {}) {
 
     const buf = new Uint8Array(await res.arrayBuffer());
     if (buf.byteLength > maxBytes) throw new Error(`Upstream too large (${buf.byteLength} bytes)`);
-
     return buf;
   } finally {
     clearTimeout(t);
   }
 }
 
-// =====================
-// Minimal protobuf reader (varint + length-delimited)
-// Enough for GTFS-RT scanning
-// =====================
+// -------- minimal protobuf reader
 class Reader {
   constructor(u8) {
     this.u8 = u8;
@@ -95,113 +86,42 @@ class Reader {
   }
 }
 
-const textDecoder = new TextDecoder();
+const td = new TextDecoder();
 
-// FeedMessage.entity (field 2) -> FeedEntity.trip_update (field 4)
-// TripUpdate.trip (field 1) -> TripDescriptor.route_id (field 5)
-// TripUpdate.stop_time_update (field 2) -> StopTimeUpdate.stop_id (field 1)
-// StopTimeUpdate.arrival/departure (field 2/3) -> StopTimeEvent.time (field 1)
-function getNextDeparturesUnix(feedBytes, routeWanted, stopWanted, nWanted) {
-  const nowSec = Math.floor(Date.now() / 1000);
-  const best = []; // sorted ascending, distinct
-
-  const r = new Reader(feedBytes);
-  while (!r.eof()) {
-    const tag = r.varint();
-    const field = tag >>> 3;
-    const wire = tag & 7;
-
-    if (field === 2 && wire === 2) {
-      const entity = r.bytes();
-      const t = findEarliestForStopInEntity(entity, routeWanted, stopWanted, nowSec);
-      if (t != null && t >= nowSec) {
-        insertDistinctSorted(best, t, nWanted);
-      }
-    } else {
-      r.skip(wire);
-    }
-  }
-
-  return { nowSec, times: best };
-}
-
-function insertDistinctSorted(arr, value, maxLen) {
-  if (arr.includes(value)) return;
-  arr.push(value);
-  arr.sort((a, b) => a - b);
-  if (arr.length > maxLen) arr.length = maxLen;
-}
-
-function findEarliestForStopInEntity(entityBytes, routeWanted, stopWanted, nowSec) {
-  const er = new Reader(entityBytes);
-  while (!er.eof()) {
-    const tag = er.varint();
-    const field = tag >>> 3;
-    const wire = tag & 7;
-
-    if (field === 4 && wire === 2) {
-      const tripUpdate = er.bytes();
-      const t = findEarliestForStopInTripUpdate(tripUpdate, routeWanted, stopWanted, nowSec);
-      if (t != null) return t;
-    } else {
-      er.skip(wire);
-    }
-  }
-  return null;
-}
-
-function findEarliestForStopInTripUpdate(tripUpdateBytes, routeWanted, stopWanted, nowSec) {
-  const tr = new Reader(tripUpdateBytes);
-
-  let routeId = null;
-  const stopUpdates = [];
-
-  while (!tr.eof()) {
-    const tag = tr.varint();
-    const field = tag >>> 3;
-    const wire = tag & 7;
-
-    if (field === 1 && wire === 2) {
-      // trip descriptor
-      const tripDesc = tr.bytes();
-      routeId = readRouteIdFromTripDescriptor(tripDesc) ?? routeId;
-    } else if (field === 2 && wire === 2) {
-      // stop_time_update
-      stopUpdates.push(tr.bytes());
-    } else {
-      tr.skip(wire);
-    }
-  }
-
-  if (routeId != null && routeId !== routeWanted) return null;
-
-  let best = null;
-  for (const stu of stopUpdates) {
-    const { stopId, time } = readStopTimeUpdate(stu);
-    if (stopId === stopWanted && time != null && time >= nowSec) {
-      if (best == null || time < best) best = time;
-    }
-  }
-  return best;
-}
-
-function readRouteIdFromTripDescriptor(tripDescBytes) {
+// -------- decode helpers (GTFS-RT TripUpdates scanning)
+function readTripDescriptor(tripDescBytes) {
+  // TripDescriptor: trip_id=field 1 (len), route_id=field 5 (len)
   const r = new Reader(tripDescBytes);
+  let tripId = null;
+  let routeId = null;
+
   while (!r.eof()) {
     const tag = r.varint();
     const field = tag >>> 3;
     const wire = tag & 7;
-    // route_id = field 5 (len)
-    if (field === 5 && wire === 2) {
-      return textDecoder.decode(r.bytes());
-    } else {
-      r.skip(wire);
-    }
+
+    if (field === 1 && wire === 2) tripId = td.decode(r.bytes());
+    else if (field === 5 && wire === 2) routeId = td.decode(r.bytes());
+    else r.skip(wire);
+  }
+  return { tripId, routeId };
+}
+
+function readStopTimeEventTime(evBytes) {
+  // StopTimeEvent: time=field 1 (varint)
+  const r = new Reader(evBytes);
+  while (!r.eof()) {
+    const tag = r.varint();
+    const field = tag >>> 3;
+    const wire = tag & 7;
+    if (field === 1 && wire === 0) return r.varint();
+    r.skip(wire);
   }
   return null;
 }
 
 function readStopTimeUpdate(stuBytes) {
+  // StopTimeUpdate: stop_id=field 1 (len), arrival=field2 (len), departure=field3 (len)
   const r = new Reader(stuBytes);
   let stopId = null;
   let time = null;
@@ -212,10 +132,10 @@ function readStopTimeUpdate(stuBytes) {
     const wire = tag & 7;
 
     if (field === 1 && wire === 2) {
-      stopId = textDecoder.decode(r.bytes());
+      stopId = td.decode(r.bytes());
     } else if ((field === 2 || field === 3) && wire === 2) {
       const ev = r.bytes();
-      const t = readTimeFromStopTimeEvent(ev);
+      const t = readStopTimeEventTime(ev);
       if (t != null) time = time == null ? t : Math.min(time, t);
     } else {
       r.skip(wire);
@@ -225,22 +145,97 @@ function readStopTimeUpdate(stuBytes) {
   return { stopId, time };
 }
 
-function readTimeFromStopTimeEvent(evBytes) {
-  const r = new Reader(evBytes);
+// On scan TOUT le flux et on récupère des candidats au stop voulu,
+// en gardant routeId/tripId pour ensuite filtrer “intelligemment”.
+function collectCandidates(feedBytes, desiredStop, nowSec) {
+  const candidates = [];
+  const seenStops = new Map(); // stopId -> count (pour debug)
+  const seenRouteIds = new Map(); // routeId -> count (pour debug)
+
+  const r = new Reader(feedBytes);
   while (!r.eof()) {
     const tag = r.varint();
     const field = tag >>> 3;
     const wire = tag & 7;
 
-    if (field === 1 && wire === 0) return r.varint(); // time
-    r.skip(wire);
+    // FeedMessage.entity = field 2 (len)
+    if (field === 2 && wire === 2) {
+      const entityBytes = r.bytes();
+      const ent = new Reader(entityBytes);
+
+      while (!ent.eof()) {
+        const etag = ent.varint();
+        const ef = etag >>> 3;
+        const ew = etag & 7;
+
+        // FeedEntity.trip_update = field 4 (len)
+        if (ef === 4 && ew === 2) {
+          const tripUpdateBytes = ent.bytes();
+          parseTripUpdate(tripUpdateBytes, desiredStop, nowSec, candidates, seenStops, seenRouteIds);
+        } else {
+          ent.skip(ew);
+        }
+      }
+    } else {
+      r.skip(wire);
+    }
   }
-  return null;
+
+  // Top debug
+  const topStops = [...seenStops.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const topRouteIds = [...seenRouteIds.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  return { candidates, topStops, topRouteIds };
 }
 
-// =====================
-// Main
-// =====================
+function parseTripUpdate(tripUpdateBytes, desiredStop, nowSec, candidates, seenStops, seenRouteIds) {
+  const tr = new Reader(tripUpdateBytes);
+  let tripId = null;
+  let routeId = null;
+
+  while (!tr.eof()) {
+    const tag = tr.varint();
+    const field = tag >>> 3;
+    const wire = tag & 7;
+
+    if (field === 1 && wire === 2) {
+      const tripDesc = tr.bytes();
+      const t = readTripDescriptor(tripDesc);
+      tripId = t.tripId ?? tripId;
+      routeId = t.routeId ?? routeId;
+    } else if (field === 2 && wire === 2) {
+      const stuBytes = tr.bytes();
+      const { stopId, time } = readStopTimeUpdate(stuBytes);
+
+      if (stopId) seenStops.set(stopId, (seenStops.get(stopId) ?? 0) + 1);
+      if (routeId) seenRouteIds.set(routeId, (seenRouteIds.get(routeId) ?? 0) + 1);
+
+      if (stopId === desiredStop && time != null && time >= nowSec) {
+        candidates.push({ time, stopId, routeId, tripId });
+      }
+    } else {
+      tr.skip(wire);
+    }
+  }
+}
+
+// Filtre intelligent : on essaie route_id exact, sinon trip_id qui contient "55" (ou "route 55")
+// Sinon fallback : on prend sans filtre route (au moins on ne renvoie pas vide)
+function pickNextN(candidates, desiredRoute, n) {
+  const sorted = [...candidates].sort((a, b) => a.time - b.time);
+
+  const byRouteId = sorted.filter((c) => c.routeId === desiredRoute);
+  if (byRouteId.length > 0) return { picked: byRouteId.slice(0, n), filterUsed: "routeId === desiredRoute" };
+
+  const byTripHeuristic = sorted.filter((c) => {
+    const t = (c.tripId ?? "").toLowerCase();
+    return t.includes(desiredRoute) || t.includes(`_${desiredRoute}_`) || t.includes(`-${desiredRoute}-`);
+  });
+  if (byTripHeuristic.length > 0) return { picked: byTripHeuristic.slice(0, n), filterUsed: "tripId heuristic contains desiredRoute" };
+
+  return { picked: sorted.slice(0, n), filterUsed: "fallback: no route match, used stop-only" };
+}
+
 async function main() {
   const nowUnix = Math.floor(Date.now() / 1000);
 
@@ -248,34 +243,59 @@ async function main() {
   let error = null;
 
   try {
-    feedBytes = await safeFetchBytes(UPSTREAM_URL, { timeoutMs: 5000, maxBytes: 2_500_000 });
+    feedBytes = await safeFetchBytes(UPSTREAM_URL);
   } catch (e) {
     error = String(e?.message || e);
   }
 
-  let nextUnix = [];
-  let nextMinutes = [];
+  let out;
 
-  if (feedBytes) {
-    const { nowSec, times } = getNextDeparturesUnix(feedBytes, ROUTE_ID, STOP_ID, N_NEXT);
-    nextUnix = times;
-    nextMinutes = times.map((t) => Math.max(0, Math.round((t - nowSec) / 60)));
+  if (!feedBytes) {
+    out = {
+      ok: false,
+      route: DESIRED_ROUTE,
+      stop: DESIRED_STOP,
+      updatedAtUnix: nowUnix,
+      nextMinutes: [],
+      nextUnix: [],
+      filterUsed: null,
+      debug: { topStops: [], topRouteIds: [], sampleCandidates: [] },
+      source: "stm-gtfs-rt tripUpdates",
+      error,
+    };
+  } else {
+    const nowSec = Math.floor(Date.now() / 1000);
+    const { candidates, topStops, topRouteIds } = collectCandidates(feedBytes, DESIRED_STOP, nowSec);
+
+    const { picked, filterUsed } = pickNextN(candidates, DESIRED_ROUTE, N_NEXT);
+    const nextUnix = picked.map((p) => p.time);
+    const nextMinutes = picked.map((p) => Math.max(0, Math.round((p.time - nowSec) / 60)));
+
+    out = {
+      ok: true,
+      route: DESIRED_ROUTE,
+      stop: DESIRED_STOP,
+      updatedAtUnix: nowUnix,
+      nextMinutes,
+      nextUnix,
+      filterUsed,
+      // Debug utile pour identifier les vrais IDs STM (route_id/stop_id) si besoin
+      debug: {
+        candidatesCountForStop: candidates.length,
+        sampleCandidates: candidates
+          .sort((a, b) => a.time - b.time)
+          .slice(0, 10)
+          .map(({ time, routeId, tripId, stopId }) => ({ time, routeId, tripId, stopId })),
+        topStops,
+        topRouteIds,
+      },
+      source: "stm-gtfs-rt tripUpdates",
+      error: null,
+    };
   }
-
-  const out = {
-    ok: !!feedBytes,
-    route: ROUTE_ID,
-    stop: STOP_ID,
-    updatedAtUnix: nowUnix,
-    nextMinutes,
-    nextUnix,
-    source: "stm-gtfs-rt tripUpdates",
-    error,
-  };
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.writeFileSync(OUT_FILE, JSON.stringify(out, null, 2), "utf8");
-
   console.log(`Wrote ${OUT_FILE}`);
 }
 
