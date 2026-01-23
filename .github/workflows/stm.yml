@@ -2,11 +2,15 @@ name: STM - prochain bus 55 (commit json)
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/5 * * * *"   # toutes les 5 minutes (GitHub peut dériver un peu)
   workflow_dispatch:
+  # Optionnel si tu veux tester facilement
+  push:
+    branches:
+      - main
 
 permissions:
-  contents: write
+  contents: write   # IMPORTANT: on va commit/push
 
 concurrency:
   group: stm-prochainbus55
@@ -22,6 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          clean: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -33,9 +38,9 @@ jobs:
           STM_API_KEY: ${{ secrets.STM_API_KEY }}
         run: node scripts/fetch-stm.mjs
 
-      - name: Show generated file
+      - name: Debug output
         run: |
-          echo "Generated file:"
+          echo "CONTENU data/:"
           ls -lah data || true
           cat data/prochainBus55.json || true
 
