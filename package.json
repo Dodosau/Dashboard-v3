@@ -1,5 +1,5 @@
 {
-  "name": "dashboard-v3-stm",
-  "private": true,
-  "type": "module"
+  "name": "stm-proxy-github",
+  "type": "module",
+  "version": "1.0.0"
 }
