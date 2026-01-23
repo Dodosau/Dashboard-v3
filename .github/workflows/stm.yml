@@ -2,14 +2,11 @@ name: STM - prochain bus 55 (commit json)
 
 on:
   schedule:
-    - cron: "*/5 * * * *" # toutes les 5 minutes (GitHub peut dériver un peu)
+    - cron: "*/5 * * * *"
   workflow_dispatch:
-  # Optionnel pendant tes tests (tu peux enlever après)
-  push:
-    branches: [main]
 
 permissions:
-  contents: write # IMPORTANT: pour pouvoir commit/push
+  contents: write
 
 concurrency:
   group: stm-prochainbus55
