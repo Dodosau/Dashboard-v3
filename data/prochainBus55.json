@@ -1,17 +1,1 @@
-{
-  "ok": true,
-  "route": "55",
-  "stop": "52103",
-  "updatedAtUnix": 1769173477,
-  "nextMinutes": [],
-  "nextUnix": [],
-  "filterUsed": "fallback: no route match, used stop-only",
-  "debug": {
-    "candidatesCountForStop": 0,
-    "sampleCandidates": [],
-    "topStops": [],
-    "topRouteIds": []
-  },
-  "source": "stm-gtfs-rt tripUpdates",
-  "error": null
-}
+{"ok":true,"routeId":"55","stopId":"52103","generatedAtUnix":1769173614,"error":null,"message":"OK","nextBusMinutes":5,"nextBus2Minutes":18,"nextBus3Minutes":31,"departureTimeUnix":1769173904,"departure2TimeUnix":1769174684,"departure3TimeUnix":1769175464,"feedTimestampUnix":1769173606,"feedAgeSeconds":8}
