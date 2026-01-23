@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "route": "55",
+  "stop": "52103",
+  "updatedAtUnix": 1769172690,
+  "nextMinutes": [],
+  "nextUnix": [],
+  "source": "stm-gtfs-rt tripUpdates",
+  "error": null
+}
