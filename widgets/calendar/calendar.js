@@ -8,7 +8,6 @@
     var calList = document.getElementById("calList");
     if (!calToday || !calList) return;
 
-    // Date du jour en haut : "Samedi 24 Janvier 2026"
     setTopDate(calToday);
 
     loadICS(function (events) {
@@ -17,7 +16,8 @@
   }
 
   /* ---------------------------------------------------------
-     Date du jour en haut (FR)
+     Date du jour en haut (FR, sans année)
+     Ex: "Samedi 24 Janvier"
   --------------------------------------------------------- */
   function setTopDate(el) {
     var now = new Date();
@@ -31,7 +31,7 @@
   }
 
   /* ---------------------------------------------------------
-     CHARGEMENT DU FICHIER ICS (avec anti-cache Safari)
+     CHARGEMENT DU FICHIER ICS (anti-cache Safari)
   --------------------------------------------------------- */
   function loadICS(cb) {
     var xhr = new XMLHttpRequest();
@@ -49,7 +49,7 @@
 
   /* ---------------------------------------------------------
      PARSE ICS → extraction des événements
-     - support événements "all-day" (DTSTART;VALUE=DATE:YYYYMMDD)
+     - support all-day (DTSTART;VALUE=DATE:YYYYMMDD)
   --------------------------------------------------------- */
   function parseICS(text) {
     var events = [];
@@ -60,7 +60,7 @@
 
       var summary = (block.match(/SUMMARY:(.+)/) || [])[1];
 
-      // DTSTART et DTEND (support avec ou sans TZID, et VALUE=DATE)
+      // DTSTART / DTEND : support TZID et VALUE=DATE
       var startMatch = block.match(/DTSTART(?:;[^:]+)?:([0-9T]+)/);
       var endMatch   = block.match(/DTEND(?:;[^:]+)?:([0-9T]+)/);
 
@@ -71,7 +71,7 @@
         var isAllDay = (start.length === 8); // YYYYMMDD
 
         events.push({
-          summary: summary.trim(),
+          summary: cleanText(summary),
           start: parseICSTime(start),
           end: end ? parseICSTime(end) : null,
           allDay: isAllDay
@@ -82,9 +82,14 @@
     return events;
   }
 
+  // Nettoyage léger (évite caractères bizarres / échappements)
+  function cleanText(s) {
+    return String(s).trim().replace(/\\n/g, " ").replace(/\s+/g, " ");
+  }
+
   /* ---------------------------------------------------------
-     CONVERSION D’UNE DATE ICS → objet Date JS
-     - All-day : YYYYMMDD (pas d'heure)
+     CONVERSION ICS → Date JS
+     - All-day : YYYYMMDD
      - Timed   : YYYYMMDDTHHMM(SS)
   --------------------------------------------------------- */
   function parseICSTime(str) {
@@ -115,8 +120,8 @@
   --------------------------------------------------------- */
   function renderAutoFit(listEl, events) {
     var now = new Date();
+    var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // Clear
     listEl.innerHTML = "";
 
     // Filtre: on garde les events non terminés
@@ -146,8 +151,6 @@
     }
 
     // Ajoute les jours tant que ça rentre
-    var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
     for (var k = 0; k < orderedKeys.length; k++) {
       var key = orderedKeys[k];
       var dayDate = keyToDate(key);
@@ -227,7 +230,9 @@
   }
 
   /* ---------------------------------------------------------
-     Construit une "sub-box" pour un jour (avec tri all-day en haut)
+     Construit une "sub-box" pour un jour
+     - Tri: all-day en premier, puis par heure
+     - Heures: une seule boîte texte + <br> (ultra stable iOS 12)
   --------------------------------------------------------- */
   function buildDaySection(dayDate, events) {
     var box = document.createElement("div");
@@ -255,7 +260,7 @@
       row.className = "item-row";
 
       var left = document.createElement("div");
-      // ✅ IMPORTANT: on évite -webkit-line-clamp (bug iOS 12 possible) → clamp-2-safe
+      // ✅ iOS 12 safe : pas de -webkit-line-clamp
       left.className = "item-left clamp-2-safe";
       left.textContent = ev.summary;
 
@@ -263,10 +268,7 @@
       right.className = "item-right w-64 tabular";
 
       if (ev.allDay) {
-        // Style spécial (dans calendar.css)
         row.className = "item-row allday";
-
-        // Option: icône pour visibilité immédiate
         left.textContent = "📌 " + ev.summary;
 
         var b = document.createElement("span");
@@ -274,16 +276,13 @@
         b.textContent = "JOURNÉE";
         right.appendChild(b);
       } else {
-        var tStart = document.createElement("div");
-        tStart.textContent = fmtTime(ev.start);
-        right.appendChild(tStart);
-
-        // ✅ Ne créer la ligne "fin" que si ev.end existe (évite chevauchements)
+        // ✅ ULTRA-STABLE iPad Safari : une seule boîte texte + <br>
         if (ev.end) {
-          var tEnd = document.createElement("div");
-          tEnd.className = "muted";
-          tEnd.textContent = fmtTime(ev.end);
-          right.appendChild(tEnd);
+          right.innerHTML =
+            fmtTime(ev.start) +
+            "<br><span class='muted'>" + fmtTime(ev.end) + "</span>";
+        } else {
+          right.textContent = fmtTime(ev.start);
         }
       }
 
