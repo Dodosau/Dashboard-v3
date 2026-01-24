@@ -1,3 +1,4 @@
+body { outline: 6px solid magenta !important; }
 /* ---------------------------------------------------------
    CALENDAR ONLY — anti superposition iPad Safari
    Tout ce qui est spécifique au widget calendrier va ici.
