@@ -20,8 +20,7 @@
     el.textContent =
       jours[now.getDay()] + " " +
       now.getDate() + " " +
-      mois[now.getMonth()] + " " +
-      now.getFullYear();
+      mois[now.getMonth()];
   }
 
   function loadICS(cb) {
