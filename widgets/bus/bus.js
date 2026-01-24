@@ -1,5 +1,4 @@
 (function () {
-
   // ===============================
   // CONFIG DIRECTE (URL en dur)
   // ===============================
@@ -38,17 +37,28 @@
     box.classList.remove("color-green", "color-orange", "color-red");
 
     // 0–5 rouge, 6–9 orange, 10+ vert
-    if (minutes <= 5) {
-      box.classList.add("color-red");
-    } else if (minutes <= 9) {
-      box.classList.add("color-orange");
-    } else {
-      box.classList.add("color-green");
-    }
+    if (minutes <= 5) box.classList.add("color-red");
+    else if (minutes <= 9) box.classList.add("color-orange");
+    else box.classList.add("color-green");
   }
 
   function setDash(el) {
     if (el) el.textContent = "—";
+  }
+
+  function clearColor(box) {
+    if (!box) return;
+    box.classList.remove("color-green", "color-orange", "color-red");
+  }
+
+  // ===============================
+  // Helpers minutes
+  // ===============================
+  function toMinutes(unixSeconds, nowMs) {
+    if (!unixSeconds) return null;
+    var t = unixSeconds * 1000;
+    var m = Math.floor((t - nowMs) / 60000);
+    return m;
   }
 
   // ===============================
@@ -70,51 +80,47 @@
         if (err || !d || !d.ok) {
           setDash(busNext);
           setDash(busNext2);
+          clearColor(box1);
+          clearColor(box2);
           return;
         }
 
         var now = Date.now();
 
-        // 3 timestamps (3e = réserve)
-        var t1 = d.departureTimeUnix ? d.departureTimeUnix * 1000 : null;
-        var t2 = d.departure2TimeUnix ? d.departure2TimeUnix * 1000 : null;
-        var t3 = d.departure3TimeUnix ? d.departure3TimeUnix * 1000 : null;
-
-        var m1 = t1 ? Math.floor((t1 - now) / 60000) : null;
-        var m2 = t2 ? Math.floor((t2 - now) / 60000) : null;
-        var m3 = t3 ? Math.floor((t3 - now) / 60000) : null;
-
-        if (m1 != null) m1 = Math.max(0, m1);
-        if (m2 != null) m2 = Math.max(0, m2);
-        if (m3 != null) m3 = Math.max(0, m3);
+        // minutes brutes (peuvent être négatives / null)
+        var m1 = toMinutes(d.departureTimeUnix, now);
+        var m2 = toMinutes(d.departure2TimeUnix, now);
+        var m3 = toMinutes(d.departure3TimeUnix, now);
 
         // ===============================
-        // SHIFT INTELLIGENT
+        // SHIFT "PROPRE" :
+        // - on retire ce qui est <= 0 (bus déjà passé ou "à 0")
+        // - on garde l’ordre t1 -> t2 -> t3
+        // - on prend les 2 premiers restants
         // ===============================
-        if (m1 != null && m1 <= 0) {
-          m1 = m2;
-          m2 = m3;
-          m3 = null;
-        }
-        if (m1 != null && m1 <= 0) {
-          m1 = m2;
-          m2 = null;
-        }
-        if (m2 != null && m2 <= 0) {
-          m2 = null;
-        }
+        var list = [];
+
+        if (m1 != null && m1 > 0) list.push(m1);
+        if (m2 != null && m2 > 0) list.push(m2);
+        if (m3 != null && m3 > 0) list.push(m3);
+
+        var a = list.length > 0 ? list[0] : null;
+        var b = list.length > 1 ? list[1] : null;
 
         // ===============================
         // Affichage (2 cases seulement)
         // ===============================
-        busNext.textContent = m1 != null ? m1 + " min" : "—";
-        busNext2.textContent = m2 != null ? m2 + " min" : "—";
+        busNext.textContent = a != null ? a + " min" : "—";
+        busNext2.textContent = b != null ? b + " min" : "—";
 
         // ===============================
         // Couleurs
         // ===============================
-        if (m1 != null) applyColor(box1, m1);
-        if (m2 != null) applyColor(box2, m2);
+        if (a != null) applyColor(box1, a);
+        else clearColor(box1);
+
+        if (b != null) applyColor(box2, b);
+        else clearColor(box2);
       });
     }
 
@@ -130,5 +136,4 @@
   } else {
     init();
   }
-
 })();
