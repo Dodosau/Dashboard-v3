@@ -28,7 +28,6 @@
 
 /* ---------------------------------------------------------
    ALIGNEMENTS / CENTRAGES (utilitaires)
-   (tu les utilises déjà: text-center, v-center)
 --------------------------------------------------------- */
 .text-center {
   text-align: center;
@@ -42,7 +41,6 @@
 
 /* ---------------------------------------------------------
    SOUS-CASES (sub-box)
-   Utilisées pour créer des blocs internes dans un widget.
 --------------------------------------------------------- */
 .sub-box {
   background: rgba(255,255,255,0.05);
@@ -110,49 +108,42 @@
 
 /* ---------------------------------------------------------
    UTILITAIRES DE LISTE "GAUCHE / DROITE"
-   (version stable iPad Safari : évite superpositions)
+   (stable iPad Safari : évite superpositions)
 --------------------------------------------------------- */
-
-/* Ligne horizontale */
 .item-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;          /* un peu plus d’air */
-  padding: 10px 0;    /* évite que les lignes se touchent */
+  gap: 12px;
+  padding: 10px 0;
 }
 
-/* Zone gauche: texte (jusqu'à 2 lignes max via clamp) */
 .item-left {
   flex: 1;
-  min-width: 0;       /* CRUCIAL en flex + clamp */
-  line-height: 1.2;   /* plus safe que 1.15 sur iPad */
+  min-width: 0;
+  line-height: 1.2;
 }
 
-/* Zone droite: colonne fixe d’info (heures, valeurs)
-   ✅ on force une vraie colonne flex pour garantir 2 lignes stables
-*/
 .item-right {
   flex: 0 0 auto;
   text-align: right;
   white-space: nowrap;
 
-  display: flex;          /* ✅ IMPORTANT */
-  flex-direction: column; /* ✅ IMPORTANT */
-  align-items: flex-end;  /* ✅ IMPORTANT */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 
-  gap: 2px;               /* espace entre ligne 1 et 2 */
-  line-height: 1.2;       /* évite chevauchement iPad */
+  gap: 2px;
+  line-height: 1.2;
 }
 
-/* Largeurs prêtes à l'emploi pour la colonne droite */
+/* Largeurs prêtes à l'emploi */
 .item-right.w-56 { width: 56px; }
 .item-right.w-64 { width: 64px; }
 .item-right.w-72 { width: 72px; }
 
 /* ---------------------------------------------------------
    CLAMP / TRONCATURE (2 lignes max)
-   iPad Safari: webkit-line-clamp OK mais on sécurise min-width:0 + overflow
 --------------------------------------------------------- */
 .clamp-2 {
   overflow: hidden;
@@ -161,13 +152,25 @@
   -webkit-line-clamp: 2;
 }
 
-/* Fallback ultra-stable (si jamais iOS 12 fait encore des siennes)
-   -> remplace clamp-2 par clamp-2-safe dans ton JS si besoin
-*/
+/* Fallback ultra-stable si iOS 12 bug encore */
 .clamp-2-safe {
   overflow: hidden;
   line-height: 1.2;
   max-height: 2.4em; /* 2 lignes * 1.2em */
+}
+
+/* ---------------------------------------------------------
+   BADGES (génériques)
+   Utilisable partout (todo, statuts, tags...)
+--------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------
@@ -183,14 +186,3 @@
 .muted {
   opacity: 0.75;
 }
-
-/* ---------------------------------------------------------
-   EXEMPLE D'USAGE
-   <div class="item-row">
-     <div class="item-left clamp-2">Titre événement...</div>
-     <div class="item-right w-64 tabular">
-       <div>12:00</div>
-       <div class="muted">13:00</div>
-     </div>
-   </div>
---------------------------------------------------------- */
