@@ -46,3 +46,20 @@ body { outline: 6px solid magenta !important; }
   color: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(46, 204, 113, 0.40);
 }
+
+/* ---------------------------------------------------------
+   FIX iPad iOS12 : empêcher les jours (sub-box) de se superposer
+   car .sub-box global a flex:1
+--------------------------------------------------------- */
+#calList {
+  display: block !important;   /* on sort du flex-column */
+}
+
+#calList > .sub-box {
+  flex: 0 0 auto !important;   /* neutralise flex:1 de components.css */
+  margin-bottom: 12px;         /* espace entre jours */
+}
+
+#calList > .sub-box:last-child {
+  margin-bottom: 0;
+}
