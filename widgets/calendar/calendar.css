@@ -1,18 +1,61 @@
 /* ---------------------------------------------------------
    CALENDAR ONLY
    Styles spécifiques au widget calendrier.
-   (Tout ce qui est "thème" calendrier va ici, pas dans components.css)
 --------------------------------------------------------- */
 
-/* Événement "toute la journée" : ressort visuellement */
-.item-row.allday {
+/* ✅ FIX iPad Safari : stabilise la mise en page des items
+   On force une grille uniquement dans le calendrier (scopé à #calList)
+*/
+#calList .item-row {
+  display: grid;
+  grid-template-columns: 1fr 64px; /* colonne droite fixe */
+  column-gap: 12px;
+  align-items: start;
+  padding: 10px 0;
+}
+
+/* Si tu utilises w-56 ou w-72, on adapte la colonne droite */
+#calList .item-row.right-56 { grid-template-columns: 1fr 56px; }
+#calList .item-row.right-72 { grid-template-columns: 1fr 72px; }
+
+#calList .item-left {
+  min-width: 0;
+  line-height: 1.25; /* un poil plus grand = zéro chevauchement */
+}
+
+/* Colonne droite stable (2 lignes max) */
+#calList .item-right {
+  width: 64px; /* cohérent avec grid-template-columns */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+/* Largeurs si tu changes w-xx */
+#calList .item-right.w-56 { width: 56px; }
+#calList .item-right.w-64 { width: 64px; }
+#calList .item-right.w-72 { width: 72px; }
+
+/* ✅ garantit que chaque ligne d'heure se comporte bien */
+#calList .item-right > div,
+#calList .item-right > span {
+  display: block;
+  line-height: 1.25;
+}
+
+/* ---------------------------------------------------------
+   Événements "toute la journée" (distincts)
+--------------------------------------------------------- */
+#calList .item-row.allday {
   background: rgba(46, 204, 113, 0.10);
   border: 1px solid rgba(46, 204, 113, 0.25);
   border-radius: 12px;
-  padding: 10px 10px;  /* remplace le padding de base de item-row */
+  padding: 10px 10px;
 }
 
-/* Badge "JOURNÉE" spécifique */
 .badge-allday {
   background: rgba(46, 204, 113, 0.18);
   color: rgba(255, 255, 255, 0.95);
