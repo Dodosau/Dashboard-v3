@@ -3,10 +3,12 @@
    ---------------------------------------------------------
    On supprime les marges par défaut et on force le body
    à occuper toute la hauteur de l’écran.
+   overflow:hidden évite le scroll fantôme sur iPad/Safari.
 --------------------------------------------------------- */
 html, body {
   height: 100%;
   margin: 0;
+  overflow: hidden; /* ✅ dashboard plein écran stable */
 }
 
 /* ---------------------------------------------------------
@@ -24,9 +26,6 @@ body {
 
 /* ---------------------------------------------------------
    BOX-SIZING GLOBAL
-   ---------------------------------------------------------
-   Permet d’éviter les calculs compliqués de largeur/hauteur.
-   Tous les éléments incluent padding + border dans leur taille.
 --------------------------------------------------------- */
 * {
   box-sizing: border-box;
@@ -34,82 +33,65 @@ body {
 
 /* ---------------------------------------------------------
    TAILLES DE TEXTE GLOBALES
-   ---------------------------------------------------------
-   Ces classes permettent d’unifier la typographie sur
-   tous les widgets du dashboard.
 --------------------------------------------------------- */
 .text-huge {
-  font-size: 90px;   /* Très visible (ex: heure, température) */
-  font-weight: 600;  /* Semi-gras pour une bonne lisibilité */
+  font-size: 90px;
+  font-weight: 600;
 }
 
 .text-large {
-  font-size: 45px;   /* Très visible (ex: heure, température) */
-  font-weight: 600;  /* Semi-gras pour une bonne lisibilité */
+  font-size: 45px;
+  font-weight: 600;
 }
 
 .text-medium {
-  font-size: 22px;   /* Sous-titres, valeurs secondaires */
+  font-size: 22px;
   font-weight: 400;
 }
 
 .text-small {
-  font-size: 16px;   /* Labels, dates, heures d’événements */
+  font-size: 16px;
   font-weight: 400;
 }
 
 .text-tiny {
-  font-size: 12px;   /* Détails très discrets */
+  font-size: 12px;
   opacity: 0.8;
   font-weight: 300;
 }
 
 /* ---------------------------------------------------------
    ALIGNEMENT HORIZONTAL DU TEXTE
-   ---------------------------------------------------------
-   Similaire à Word : gauche / centre / droite.
 --------------------------------------------------------- */
-.text-left {
-  text-align: left;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-right {
-  text-align: right;
-}
+.text-left  { text-align: left; }
+.text-center{ text-align: center; }
+.text-right { text-align: right; }
 
 /* ---------------------------------------------------------
-   ALIGNEMENT VERTICAL DANS UN BLOC
-   ---------------------------------------------------------
-   Nécessite que le parent devienne un conteneur flex.
-   Permet de coller le contenu en haut, centrer, ou en bas.
+   ALIGNEMENT VERTICAL DANS UN BLOC (flex helpers)
 --------------------------------------------------------- */
 .v-top {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Collé en haut */
+  justify-content: flex-start;
 }
 
 .v-center {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centré verticalement */
+  justify-content: center;
 }
 
 .v-bottom {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Collé en bas */
+  justify-content: flex-end;
 }
 
 /* ---------------------------------------------------------
    POSITIONNEMENT DANS LA FENÊTRE
-   ---------------------------------------------------------
-   Permet de placer un widget en haut, au centre ou en bas
-   de l’écran, indépendamment du reste.
+   (rarement utilisé maintenant avec la grille,
+   mais utile pour overlays, horloges plein écran, etc.)
 --------------------------------------------------------- */
 .window-top {
   position: absolute;
@@ -122,7 +104,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centre parfait */
+  transform: translate(-50%, -50%);
 }
 
 .window-bottom {
