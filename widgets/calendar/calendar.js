@@ -19,22 +19,23 @@
 
     /* ------------------------------
        DATE DU JOUR EN HAUT
+       Format: "Samedi 24 Janvier 2026"
     ------------------------------ */
     if (calToday) {
-      var now = new Date();
+      var nowTop = new Date();
 
       var jours = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
       var mois  = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
       calToday.textContent =
-        jours[now.getDay()] + " " +
-        now.getDate() + " " +
-        mois[now.getMonth()] + " " +
-        now.getFullYear();
+        jours[nowTop.getDay()] + " " +
+        nowTop.getDate() + " " +
+        mois[nowTop.getMonth()] + " " +
+        nowTop.getFullYear();
     }
 
     /* ------------------------------
-       Chargement calendrier
+       Chargement ICS puis rendu
     ------------------------------ */
     loadICS(function (events) {
       render(events, [d1, e1], [d2, e2], [d3, e3], [d4, e4]);
@@ -43,7 +44,7 @@
   }
 
   /* ---------------------------------------------------------
-     CHARGEMENT ICS (anti-cache Safari)
+     CHARGEMENT DU FICHIER ICS (anti-cache Safari)
   --------------------------------------------------------- */
   function loadICS(cb) {
     var xhr = new XMLHttpRequest();
@@ -61,7 +62,7 @@
   }
 
   /* ---------------------------------------------------------
-     PARSE ICS
+     PARSE ICS → extraction des événements
   --------------------------------------------------------- */
   function parseICS(text) {
     var events = [];
@@ -82,9 +83,13 @@
         });
       }
     }
+
     return events;
   }
 
+  /* ---------------------------------------------------------
+     CONVERSION date ICS → Date JS
+  --------------------------------------------------------- */
   function parseICSTime(str) {
     return new Date(
       parseInt(str.substring(0, 4), 10),
@@ -96,21 +101,32 @@
   }
 
   /* ---------------------------------------------------------
-     RENDER
+     RENDER : 4 jours, titres + séparateur + events
+     Layout générique (component.css):
+       - item-row
+       - item-left clamp-2
+       - item-right w-64 tabular
+       - muted
+       - divider divider--tight
   --------------------------------------------------------- */
   function render(events, d1, d2, d3, d4) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
+    // 4 jours : aujourd'hui + 3
     var days = [];
     for (var i = 0; i < 4; i++) {
       days.push(new Date(today.getTime() + i * 86400000));
     }
 
+    // groupés par jour
     var groups = [[], [], [], []];
 
+    // filtre + classement par jour
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
+
+      // ignore les événements terminés
       if (ev.end && ev.end < now) continue;
 
       for (var d = 0; d < 4; d++) {
@@ -125,10 +141,18 @@
       }
     }
 
+    // tri par heure de début
+    for (var g = 0; g < 4; g++) {
+      groups[g].sort(function (a, b) {
+        return a.start - b.start;
+      });
+    }
+
     function fmtDate(d) {
       var dd = d.getDate();
       var mm = d.getMonth() + 1;
       var yy = d.getFullYear();
+      if (dd < 10) dd = "0" + dd;
       if (mm < 10) mm = "0" + mm;
       return dd + "/" + mm + "/" + yy;
     }
@@ -142,8 +166,8 @@
     }
 
     function weekday(d) {
-      var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-      return days[d.getDay()];
+      var names = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+      return names[d.getDay()];
     }
 
     function label(i, d) {
@@ -158,35 +182,58 @@
       var dayEl = slots[i][0];
       var evEl = slots[i][1];
 
+      // Titre de sous-case
       dayEl.textContent = label(i, days[i]);
+
+      // Reset zone events
       evEl.innerHTML = "";
+
+      // Séparateur juste sous le titre
+      var sep = document.createElement("div");
+      sep.className = "divider divider--tight";
+      evEl.appendChild(sep);
 
       var list = groups[i];
       if (list.length === 0) continue;
 
+      // Events
       for (var j = 0; j < list.length; j++) {
         var ev = list[j];
 
-        var wrap = document.createElement("div");
-        wrap.style.marginBottom = "8px";
+        // Ligne "gauche / droite"
+        var row = document.createElement("div");
+        row.className = "item-row";
 
-        var name = document.createElement("div");
-        name.textContent = ev.summary;
-        wrap.appendChild(name);
+        // Texte à gauche (2 lignes max)
+        var left = document.createElement("div");
+        left.className = "item-left clamp-2";
+        left.textContent = ev.summary;
 
-        var time = document.createElement("div");
-        time.className = "small";
-        time.textContent =
-          fmtTime(ev.start) + (ev.end ? " - " + fmtTime(ev.end) : "");
-        wrap.appendChild(time);
+        // Heures à droite (2 lignes, alignées, largeur fixe)
+        var right = document.createElement("div");
+        right.className = "item-right w-64 tabular";
 
-        evEl.appendChild(wrap);
+        var tStart = document.createElement("div");
+        tStart.textContent = fmtTime(ev.start);
+
+        var tEnd = document.createElement("div");
+        tEnd.className = "muted";
+        tEnd.textContent = ev.end ? fmtTime(ev.end) : "";
+
+        right.appendChild(tStart);
+        right.appendChild(tEnd);
+
+        row.appendChild(left);
+        row.appendChild(right);
+
+        evEl.appendChild(row);
       }
     }
   }
 
   /* ---------------------------------------------------------
-     CACHE JOURS VIDES
+     CACHE LES SOUS-CASES QUI N’ONT AUCUN ÉVÉNEMENT
+     (on cache si aucun .item-row)
   --------------------------------------------------------- */
   function hideEmptyDays() {
     for (var i = 1; i <= 4; i++) {
@@ -194,14 +241,20 @@
       var box = document.getElementById("dayBox" + i);
 
       if (events && box) {
-        box.style.display = events.innerHTML.trim() === "" ? "none" : "block";
+        var hasEvent = events.querySelector && events.querySelector(".item-row");
+        box.style.display = hasEvent ? "block" : "none";
       }
     }
   }
 
-  /* --------------------------------------------------------- */
+  /* ---------------------------------------------------------
+     AUTO-REFRESH
+  --------------------------------------------------------- */
   setInterval(init, 60000);
 
+  /* ---------------------------------------------------------
+     LANCEMENT
+  --------------------------------------------------------- */
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
