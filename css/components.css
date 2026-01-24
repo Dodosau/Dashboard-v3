@@ -27,6 +27,20 @@
 }
 
 /* ---------------------------------------------------------
+   ALIGNEMENTS / CENTRAGES (utilitaires)
+   (tu les utilises déjà: text-center, v-center)
+--------------------------------------------------------- */
+.text-center {
+  text-align: center;
+}
+
+.v-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------
    SOUS-CASES (sub-box)
    Utilisées pour créer des blocs internes dans un widget.
 --------------------------------------------------------- */
@@ -42,7 +56,6 @@
 /* ---------------------------------------------------------
    LIGNES HORIZONTALES (row)
    Permet de mettre plusieurs sous-cases côte à côte.
-   align-items: stretch = même hauteur pour toutes les cases.
 --------------------------------------------------------- */
 .row {
   display: flex;
@@ -53,7 +66,6 @@
 
 /* ---------------------------------------------------------
    COLONNES INTERNES (col)
-   Permet d'organiser le contenu verticalement dans une sous-case.
 --------------------------------------------------------- */
 .col {
   display: flex;
@@ -62,20 +74,31 @@
 }
 
 /* ---------------------------------------------------------
-   SÉPARATEUR VISUEL
+   SÉPARATEUR VISUEL (générique)
+   - Utilise currentColor pour s’adapter au texte
+   - opacity pour garder un rendu doux
+   (Réutilisable partout: calendrier, listes, sections, etc.)
 --------------------------------------------------------- */
 .divider {
   height: 1px;
-  background: rgba(255,255,255,0.1);
+  background: currentColor;
+  opacity: 0.12;
   margin: 10px 0;
 }
 
+/* Variante compacte (si tu veux des séparateurs plus serrés) */
+.divider--tight {
+  margin: 6px 0;
+}
+
+/* Variante plus marquée */
+.divider--strong {
+  opacity: 0.22;
+}
 
 /* ---------------------------------------------------------
-   COULEURS SOUS CASES
+   COULEURS SOUS-CASES (bus, alertes, etc.)
 --------------------------------------------------------- */
-
-/* Couleurs génériques pour toutes les sous-cases */
 .sub-box.color-green {
   background-color: #2ecc71 !important;
   color: white !important;
@@ -90,3 +113,82 @@
   background-color: #e74c3c !important;
   color: white !important;
 }
+
+/* ---------------------------------------------------------
+   UTILITAIRES DE LISTE "GAUCHE / DROITE"
+   Objectif: une ligne avec
+   - à gauche: texte descriptif (jusqu'à 2 lignes)
+   - à droite: une colonne fixe (heures, valeurs, unités...)
+   Réutilisable pour:
+   - calendrier (event + heures)
+   - todo (tâche + statut)
+   - météo (condition + température min/max)
+   - stocks (nom + prix)
+--------------------------------------------------------- */
+
+/* Ligne horizontale avec espace entre gauche et droite */
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+/* Zone gauche: prend tout l'espace disponible */
+.item-left {
+  flex: 1;
+  line-height: 1.15;
+  min-width: 0; /* IMPORTANT: permet au texte de se "clamp" correctement en flex */
+}
+
+/* Zone droite: colonne fixe, alignée à droite */
+.item-right {
+  flex: 0 0 auto;
+  text-align: right;
+  line-height: 1.05;
+  white-space: nowrap; /* évite les retours à la ligne non voulus */
+}
+
+/* Largeurs prêtes à l'emploi pour la colonne droite */
+.item-right.w-56 { width: 56px; }
+.item-right.w-64 { width: 64px; }
+.item-right.w-72 { width: 72px; }
+
+/* ---------------------------------------------------------
+   CLAMP / TRONCATURE (2 lignes max)
+   Très utile sur iPad pour éviter que ça déborde.
+   NOTE: fonctionne sur Safari iPad (webkit)
+--------------------------------------------------------- */
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;           /* limite à 2 lignes */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   CHIFFRES ALIGNÉS (heures, minutes, prix)
+   Améliore la lisibilité en colonne (tabular numbers)
+--------------------------------------------------------- */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------
+   TEXTE SECONDAIRE (ex: heure de fin, sous-info)
+--------------------------------------------------------- */
+.muted {
+  opacity: 0.75;
+}
+
+/* ---------------------------------------------------------
+   EXEMPLE D'USAGE (dans ton JS, tu peux générer):
+   <div class="item-row">
+     <div class="item-left clamp-2">Titre événement...</div>
+     <div class="item-right w-64 tabular">
+       <div>12:00</div>
+       <div class="muted">13:00</div>
+     </div>
+   </div>
+--------------------------------------------------------- */
