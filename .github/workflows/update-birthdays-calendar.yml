@@ -1,0 +1,31 @@
+name: Update Birthdays iCloud calendar
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # toutes les heures
+  workflow_dispatch:
+
+jobs:
+  update-birthdays-calendar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download iCloud Birthdays ICS
+        run: |
+          curl -L "https://p149-caldav.icloud.com/published/2/MjAxMzUxNTc3NTkyMDEzNcr33mN1DGhEldXvug77KN2f-yHisCUaUMufF0tv7pNcZfHXKqR1BhER5icbrVNhlgnUDTKD0td6mKSMQaDkRO0" -o calendrierAnniversaires.ics
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add calendrierAnniversaires.ics
+
+          # Commit uniquement s'il y a un vrai diff
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+
+          git commit -m "Update calendrierAnniversaires.ics"
+          git push
