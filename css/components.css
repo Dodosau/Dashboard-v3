@@ -48,20 +48,19 @@
   background: rgba(255,255,255,0.05);
   padding: 12px;
   border-radius: 12px;
-  display: flex;              /* permet d'étirer le contenu */
+  display: flex;
   flex-direction: column;
-  flex: 1;                    /* largeur flexible */
+  flex: 1;
 }
 
 /* ---------------------------------------------------------
    LIGNES HORIZONTALES (row)
-   Permet de mettre plusieurs sous-cases côte à côte.
 --------------------------------------------------------- */
 .row {
   display: flex;
   flex-direction: row;
-  gap: 12px;                  /* espace entre les sous-cases */
-  align-items: stretch;       /* 🔥 égalise automatiquement les hauteurs */
+  gap: 12px;
+  align-items: stretch;
 }
 
 /* ---------------------------------------------------------
@@ -75,9 +74,6 @@
 
 /* ---------------------------------------------------------
    SÉPARATEUR VISUEL (générique)
-   - Utilise currentColor pour s’adapter au texte
-   - opacity pour garder un rendu doux
-   (Réutilisable partout: calendrier, listes, sections, etc.)
 --------------------------------------------------------- */
 .divider {
   height: 1px;
@@ -86,12 +82,10 @@
   margin: 10px 0;
 }
 
-/* Variante compacte (si tu veux des séparateurs plus serrés) */
 .divider--tight {
   margin: 6px 0;
 }
 
-/* Variante plus marquée */
 .divider--strong {
   opacity: 0.22;
 }
@@ -116,38 +110,39 @@
 
 /* ---------------------------------------------------------
    UTILITAIRES DE LISTE "GAUCHE / DROITE"
-   Objectif: une ligne avec
-   - à gauche: texte descriptif (jusqu'à 2 lignes)
-   - à droite: une colonne fixe (heures, valeurs, unités...)
-   Réutilisable pour:
-   - calendrier (event + heures)
-   - todo (tâche + statut)
-   - météo (condition + température min/max)
-   - stocks (nom + prix)
+   (version stable iPad Safari : évite superpositions)
 --------------------------------------------------------- */
 
-/* Ligne horizontale avec espace entre gauche et droite */
+/* Ligne horizontale */
 .item-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 10px;
-  padding: 8px 0;
+  gap: 12px;          /* un peu plus d’air */
+  padding: 10px 0;    /* évite que les lignes se touchent */
 }
 
-/* Zone gauche: prend tout l'espace disponible */
+/* Zone gauche: texte (jusqu'à 2 lignes max via clamp) */
 .item-left {
   flex: 1;
-  line-height: 1.15;
-  min-width: 0; /* IMPORTANT: permet au texte de se "clamp" correctement en flex */
+  min-width: 0;       /* CRUCIAL en flex + clamp */
+  line-height: 1.2;   /* plus safe que 1.15 sur iPad */
 }
 
-/* Zone droite: colonne fixe, alignée à droite */
+/* Zone droite: colonne fixe d’info (heures, valeurs)
+   ✅ on force une vraie colonne flex pour garantir 2 lignes stables
+*/
 .item-right {
   flex: 0 0 auto;
   text-align: right;
-  line-height: 1.05;
-  white-space: nowrap; /* évite les retours à la ligne non voulus */
+  white-space: nowrap;
+
+  display: flex;          /* ✅ IMPORTANT */
+  flex-direction: column; /* ✅ IMPORTANT */
+  align-items: flex-end;  /* ✅ IMPORTANT */
+
+  gap: 2px;               /* espace entre ligne 1 et 2 */
+  line-height: 1.2;       /* évite chevauchement iPad */
 }
 
 /* Largeurs prêtes à l'emploi pour la colonne droite */
@@ -157,19 +152,26 @@
 
 /* ---------------------------------------------------------
    CLAMP / TRONCATURE (2 lignes max)
-   Très utile sur iPad pour éviter que ça déborde.
-   NOTE: fonctionne sur Safari iPad (webkit)
+   iPad Safari: webkit-line-clamp OK mais on sécurise min-width:0 + overflow
 --------------------------------------------------------- */
 .clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;           /* limite à 2 lignes */
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Fallback ultra-stable (si jamais iOS 12 fait encore des siennes)
+   -> remplace clamp-2 par clamp-2-safe dans ton JS si besoin
+*/
+.clamp-2-safe {
+  overflow: hidden;
+  line-height: 1.2;
+  max-height: 2.4em; /* 2 lignes * 1.2em */
 }
 
 /* ---------------------------------------------------------
    CHIFFRES ALIGNÉS (heures, minutes, prix)
-   Améliore la lisibilité en colonne (tabular numbers)
 --------------------------------------------------------- */
 .tabular {
   font-variant-numeric: tabular-nums;
@@ -183,7 +185,7 @@
 }
 
 /* ---------------------------------------------------------
-   EXEMPLE D'USAGE (dans ton JS, tu peux générer):
+   EXEMPLE D'USAGE
    <div class="item-row">
      <div class="item-left clamp-2">Titre événement...</div>
      <div class="item-right w-64 tabular">
