@@ -27,7 +27,7 @@
 
 <body>
 
-  <div class="container">
+  <div class="container mode-4">
 
     <div class="leftCol">
       <div data-widget="clock"></div>
@@ -43,6 +43,7 @@
   </div>
 
   <!-- JS principaux -->
+  <script id="jsVH" src="js/vh.js"></script>
   <script id="jsConfig" src="js/config.js"></script>
   <script id="jsInclude" src="js/include.js"></script>
   <script id="jsApp" src="js/app.js"></script>
@@ -52,6 +53,7 @@
       🔥 Cache-busting JS
       Même principe que pour les CSS : Safari recharge toujours la dernière version.
     */
+    document.getElementById("jsVH").src = "js/vh.js?v=" + v;
     document.getElementById("jsConfig").src = "js/config.js?v=" + v;
     document.getElementById("jsInclude").src = "js/include.js?v=" + v;
     document.getElementById("jsApp").src = "js/app.js?v=" + v;
@@ -59,13 +61,10 @@
     /*
       🔄 Auto-refresh intelligent
       Recharge la page toutes les 5 minutes.
-      - Ne casse pas include.js
-      - Recharge les widgets
-      - Recharge les CSS/JS avec un nouveau timestamp
     */
     setTimeout(function () {
       location.reload();
-    }, 300000); // 300000 ms = 5 minutes
+    }, 300000);
   </script>
 
 </body>
