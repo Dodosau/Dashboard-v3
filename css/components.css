@@ -108,7 +108,8 @@
 
 /* ---------------------------------------------------------
    UTILITAIRES DE LISTE "GAUCHE / DROITE"
-   (stable iPad Safari : évite superpositions)
+   (générique, stable)
+   NOTE: le calendrier surcharge ces règles dans calendar.css
 --------------------------------------------------------- */
 .item-row {
   display: flex;
@@ -137,7 +138,6 @@
   line-height: 1.2;
 }
 
-/* Largeurs prêtes à l'emploi */
 .item-right.w-56 { width: 56px; }
 .item-right.w-64 { width: 64px; }
 .item-right.w-72 { width: 72px; }
@@ -152,7 +152,7 @@
   -webkit-line-clamp: 2;
 }
 
-/* Fallback ultra-stable si iOS 12 bug encore */
+/* Fallback ultra-stable (iPad iOS 12) */
 .clamp-2-safe {
   overflow: hidden;
   line-height: 1.2;
@@ -161,7 +161,6 @@
 
 /* ---------------------------------------------------------
    BADGES (génériques)
-   Utilisable partout (todo, statuts, tags...)
 --------------------------------------------------------- */
 .badge {
   display: inline-block;
@@ -181,7 +180,7 @@
 }
 
 /* ---------------------------------------------------------
-   TEXTE SECONDAIRE (ex: heure de fin, sous-info)
+   TEXTE SECONDAIRE
 --------------------------------------------------------- */
 .muted {
   opacity: 0.75;
