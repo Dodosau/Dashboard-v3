@@ -519,9 +519,9 @@ END:VEVENT
 BEGIN:VEVENT
 CREATED:20251213T225732Z
 DTEND;TZID=America/Toronto:20260124T130000
-DTSTAMP:20260123T191918Z
+DTSTAMP:20260124T163106Z
 DTSTART;TZID=America/Toronto:20260124T120000
-LAST-MODIFIED:20260123T191915Z
+LAST-MODIFIED:20260124T163106Z
 SEQUENCE:1
 SUMMARY:Réserver plage mariage civil Montréal 
 UID:189BE8CB-CD5A-4B6C-AA7B-A6A798C3AE8A
@@ -5042,6 +5042,21 @@ X-ALT-DESC;FMTTYPE=text/html:<P>Bonjour M. Wiliam Fortin</P>\n<P>&nbsp\;<
  -SIZE: 14px"><STRONG>L'Équipe de&nbsp\;ParisLoft</STRONG></SPAN></P>\n<P
  >83 Rachel Est</P>\n<P>Montréal \,H2W 1C7</P>\n<P>514-288-8484</P>\n<P>&
  nbsp\;</P>
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Mariage de Dorian & William 💍\n\n📅 Mercredi 17 juin 2026 (d
+ ébut d’après-midi)\n📍 Domaine de la Trinité\, 210 Chem. de la Trinité\,
+  34130 Mauguio\, France\n\n⏰ L’horaire détaillé (programme) sera communi
+ qué sur le site.\n✨ Infos pratiques + RSVP : https://sites.google.com/vi
+ ew/forzede/save-the-date
+DTEND:20260618T020000Z
+DTSTAMP:20260124T160742Z
+DTSTART:20260617T123000Z
+LAST-MODIFIED:20250831T100000Z
+LOCATION:Domaine de la Trinité
+SEQUENCE:0
+SUMMARY:Mariage de Dorian & William
+UID:dw-wedding-20260617-1430-0400-clickable@example.com
 END:VEVENT
 BEGIN:VEVENT
 ATTENDEE;CN=1;CUTYPE=INDIVIDUAL;PARTSTAT=ACCEPTED:invalid:nomail
