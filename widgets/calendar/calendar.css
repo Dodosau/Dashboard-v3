@@ -1,10 +1,8 @@
-body { outline: 6px solid magenta !important; }
 /* ---------------------------------------------------------
-   CALENDAR ONLY — anti superposition iPad Safari
-   Tout ce qui est spécifique au widget calendrier va ici.
+   CALENDAR ONLY — iPad Safari fixes + styles calendrier
 --------------------------------------------------------- */
 
-/* Layout robuste: grille 2 colonnes (texte + heures) */
+/* Layout robuste: 2 colonnes (texte + heures) */
 #calList .item-row{
   display: grid !important;
   grid-template-columns: 1fr 64px;
@@ -18,12 +16,19 @@ body { outline: 6px solid magenta !important; }
   line-height: 1.25 !important;
 }
 
-/* Colonne droite: une seule "boîte texte" (heures avec <br>) */
+/* Colonne droite:
+   - le JS met les heures avec "\n"
+   - white-space: pre => affiche bien sur 2 lignes
+*/
 #calList .item-right{
   width: 64px;
   text-align: right;
-  white-space: nowrap;
+
+  white-space: pre;         /* ✅ IMPORTANT pour "\n" */
   line-height: 1.35 !important;
+
+  overflow: hidden;         /* ✅ évite les "fuites" iPad */
+  max-height: 2.7em;        /* ~ 2 lignes */
 }
 
 #calList .item-right *{
@@ -32,7 +37,9 @@ body { outline: 6px solid magenta !important; }
   padding: 0 !important;
 }
 
-/* Événement "toute la journée" */
+/* ---------------------------------------------------------
+   Événements "toute la journée" (par défaut = vert)
+--------------------------------------------------------- */
 #calList .item-row.allday{
   background: rgba(46, 204, 113, 0.10);
   border: 1px solid rgba(46, 204, 113, 0.25);
@@ -40,11 +47,29 @@ body { outline: 6px solid magenta !important; }
   padding: 10px 10px;
 }
 
-/* Badge spécifique all-day */
+/* Badge all-day (vert) */
 .badge-allday{
   background: rgba(46, 204, 113, 0.18);
   color: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(46, 204, 113, 0.40);
+}
+
+/* ---------------------------------------------------------
+   ANNIVERSAIRES (rose)
+   -> on ajoute la classe "birthday" sur la row côté JS
+--------------------------------------------------------- */
+#calList .item-row.allday.birthday{
+  background: rgba(255, 105, 180, 0.10);
+  border: 1px solid rgba(255, 105, 180, 0.35);
+  border-radius: 12px;
+  padding: 10px 10px;
+}
+
+/* Badge anniversaire (rose) */
+.badge-birthday{
+  background: rgba(255, 105, 180, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 105, 180, 0.45);
 }
 
 /* ---------------------------------------------------------
