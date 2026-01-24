@@ -1,8 +1,13 @@
 (function () {
 
-  /* ---------------------------------------------------------
-     POINT D’ENTRÉE : initialise / refresh le widget
-  --------------------------------------------------------- */
+  // URLs des deux calendriers (GitHub Pages)
+  var ICS_MAIN_URL = "https://dodosau.github.io/Dashboard-v3/calendar.ics";
+  var ICS_BDAY_URL = "https://dodosau.github.io/Dashboard-v3/calendrierAnniversaires.ics";
+
+  // Fenêtre de génération des occurrences (anniversaires) : X jours
+  // (on garde large, le rendu auto-fit coupe ce qui dépasse)
+  var LOOKAHEAD_DAYS = 60;
+
   function init() {
     var calToday = document.getElementById("calToday");
     var calList = document.getElementById("calList");
@@ -10,14 +15,13 @@
 
     setTopDate(calToday);
 
-    loadICS(function (events) {
-      renderAutoFit(calList, events);
+    loadTwoICS(function (allEvents) {
+      renderAutoFit(calList, allEvents);
     });
   }
 
   /* ---------------------------------------------------------
      Date du jour en haut (FR, sans année)
-     Ex: "Samedi 24 Janvier"
   --------------------------------------------------------- */
   function setTopDate(el) {
     var now = new Date();
@@ -31,16 +35,37 @@
   }
 
   /* ---------------------------------------------------------
-     CHARGEMENT DU FICHIER ICS (anti-cache Safari)
+     Chargement de 2 ICS (agenda + anniversaires)
   --------------------------------------------------------- */
-  function loadICS(cb) {
+  function loadTwoICS(cb) {
+    var done = 0;
+    var a = null;
+    var b = null;
+
+    loadICS(ICS_MAIN_URL, function (events) {
+      a = events || [];
+      done++;
+      if (done === 2) cb(mergeAndExpand(a, b));
+    });
+
+    loadICS(ICS_BDAY_URL, function (events) {
+      b = events || [];
+      done++;
+      if (done === 2) cb(mergeAndExpand(a, b));
+    });
+  }
+
+  function loadICS(url, cb) {
     var xhr = new XMLHttpRequest();
-    var url = "https://dodosau.github.io/Dashboard-v3/calendar.ics?v=" + Date.now();
-    xhr.open("GET", url, true);
+    xhr.open("GET", url + "?v=" + Date.now(), true);
 
     xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        cb(parseICS(xhr.responseText));
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          cb(parseICS(xhr.responseText));
+        } else {
+          cb([]); // si l'un échoue, on n'explose pas le widget
+        }
       }
     };
 
@@ -48,52 +73,49 @@
   }
 
   /* ---------------------------------------------------------
-     PARSE ICS → extraction des événements
-     - support all-day (DTSTART;VALUE=DATE:YYYYMMDD)
+     Parse ICS (support lines foldées + DTSTART/DTEND + RRULE)
   --------------------------------------------------------- */
   function parseICS(text) {
+    // Déplie les "folded lines" ICS (lignes qui continuent avec espace)
+    // RFC: une ligne qui commence par " " ou "\t" est une continuation
+    var unfolded = text.replace(/\r\n[ \t]/g, "");
+
     var events = [];
-    var blocks = text.split("BEGIN:VEVENT");
+    var blocks = unfolded.split("BEGIN:VEVENT");
 
     for (var i = 1; i < blocks.length; i++) {
       var block = blocks[i];
 
       var summary = (block.match(/SUMMARY:(.+)/) || [])[1];
+      var uid = (block.match(/UID:(.+)/) || [])[1];
 
-      // DTSTART / DTEND : support TZID et VALUE=DATE
-      var startMatch = block.match(/DTSTART(?:;[^:]+)?:([0-9T]+)/);
-      var endMatch   = block.match(/DTEND(?:;[^:]+)?:([0-9T]+)/);
+      var dtstartLine = (block.match(/DTSTART[^:]*:([0-9T]+)/) || [])[1];
+      var dtendLine   = (block.match(/DTEND[^:]*:([0-9T]+)/) || [])[1];
+      var rruleLine   = (block.match(/RRULE:(.+)/) || [])[1];
 
-      var start = startMatch ? startMatch[1] : null;
-      var end   = endMatch ? endMatch[1] : null;
+      if (!summary || !dtstartLine) continue;
 
-      if (summary && start) {
-        var isAllDay = (start.length === 8); // YYYYMMDD
+      var isAllDay = (dtstartLine.length === 8); // YYYYMMDD
 
-        events.push({
-          summary: cleanText(summary),
-          start: parseICSTime(start),
-          end: end ? parseICSTime(end) : null,
-          allDay: isAllDay
-        });
-      }
+      events.push({
+        uid: uid ? uid.trim() : "",
+        summary: cleanText(summary),
+        start: parseICSTime(dtstartLine),
+        end: dtendLine ? parseICSTime(dtendLine) : null,
+        allDay: isAllDay,
+        rrule: rruleLine ? rruleLine.trim() : null
+      });
     }
 
     return events;
   }
 
-  // Nettoyage léger (évite caractères bizarres / échappements)
   function cleanText(s) {
     return String(s).trim().replace(/\\n/g, " ").replace(/\s+/g, " ");
   }
 
-  /* ---------------------------------------------------------
-     CONVERSION ICS → Date JS
-     - All-day : YYYYMMDD
-     - Timed   : YYYYMMDDTHHMM(SS)
-  --------------------------------------------------------- */
   function parseICSTime(str) {
-    // All-day
+    // All-day: YYYYMMDD
     if (str && str.length === 8) {
       return new Date(
         parseInt(str.substring(0, 4), 10),
@@ -103,7 +125,7 @@
       );
     }
 
-    // Timed
+    // Timed: YYYYMMDDTHHMM(SS)
     return new Date(
       parseInt(str.substring(0, 4), 10),
       parseInt(str.substring(4, 6), 10) - 1,
@@ -114,9 +136,73 @@
   }
 
   /* ---------------------------------------------------------
-     RENDER "AUTO-FIT"
-     Affiche autant de jours/événements que possible
-     tant que ça rentre dans la hauteur du widget (sans scroll).
+     Merge + expansion YEARLY pour anniversaires
+     - On traite les events avec RRULE:FREQ=YEARLY comme "anniversaire"
+     - On génère les occurrences dans la fenêtre d'affichage
+  --------------------------------------------------------- */
+  function mergeAndExpand(mainEvents, bdayEvents) {
+    var now = new Date();
+    var startRange = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // today 00:00
+    var endRange = new Date(startRange.getTime() + LOOKAHEAD_DAYS * 86400000);
+
+    var out = [];
+
+    // agenda normal : on garde tel quel
+    for (var i = 0; i < mainEvents.length; i++) out.push(mainEvents[i]);
+
+    // anniversaires : on expanse YEARLY et on force all-day
+    for (var j = 0; j < bdayEvents.length; j++) {
+      var ev = bdayEvents[j];
+
+      var isYearly = ev.rrule && /FREQ=YEARLY/i.test(ev.rrule);
+      if (isYearly) {
+        var expanded = expandYearly(ev, startRange, endRange);
+        for (var k = 0; k < expanded.length; k++) out.push(expanded[k]);
+      } else {
+        // si jamais un anniversaire n'a pas de RRULE (événement unique)
+        ev.allDay = true;
+        ev.isBirthday = true;
+        out.push(ev);
+      }
+    }
+
+    return out;
+  }
+
+  // Déplie une RRULE YEARLY (all-day) sur une fenêtre [rangeStart, rangeEnd)
+  function expandYearly(ev, rangeStart, rangeEnd) {
+    var res = [];
+
+    // On utilise mois/jour du DTSTART d'origine
+    var m = ev.start.getMonth(); // 0-11
+    var d = ev.start.getDate();  // 1-31
+
+    var y0 = rangeStart.getFullYear() - 1;
+    var y1 = rangeEnd.getFullYear() + 1;
+
+    for (var y = y0; y <= y1; y++) {
+      var occ = new Date(y, m, d, 0, 0, 0);
+
+      // Gère le cas 29 février: si invalid, JS passe en mars -> on ignore
+      if (occ.getMonth() !== m || occ.getDate() !== d) continue;
+
+      if (occ >= rangeStart && occ < rangeEnd) {
+        res.push({
+          uid: ev.uid,
+          summary: ev.summary,
+          start: occ,
+          end: null,
+          allDay: true,
+          isBirthday: true
+        });
+      }
+    }
+
+    return res;
+  }
+
+  /* ---------------------------------------------------------
+     AUTO-FIT renderer (comme avant)
   --------------------------------------------------------- */
   function renderAutoFit(listEl, events) {
     var now = new Date();
@@ -124,7 +210,7 @@
 
     listEl.innerHTML = "";
 
-    // Filtre: on garde les events non terminés
+    // Filtre: on garde les events non terminés (pour all-day sans end: on garde)
     var upcoming = [];
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
@@ -132,10 +218,10 @@
       upcoming.push(ev);
     }
 
-    // Trie global par start
+    // Trie global
     upcoming.sort(function (a, b) { return a.start - b.start; });
 
-    // Groupe par date YYYY-MM-DD
+    // Groupe par jour
     var map = {};
     var orderedKeys = [];
 
@@ -150,25 +236,21 @@
       map[key].push(ev);
     }
 
-    // Ajoute les jours tant que ça rentre
     for (var k = 0; k < orderedKeys.length; k++) {
       var key = orderedKeys[k];
       var dayDate = keyToDate(key);
-
-      // ignore jours avant aujourd'hui
       if (dayDate < today0) continue;
 
       var section = buildDaySection(dayDate, map[key]);
       listEl.appendChild(section);
 
-      // Stop si dépasse (pas de scroll)
+      // Stop si dépasse
       if (listEl.scrollHeight > listEl.clientHeight) {
         listEl.removeChild(section);
         break;
       }
     }
 
-    // Message si rien à afficher
     if (listEl.children.length === 0) {
       var empty = document.createElement("div");
       empty.className = "small text-center";
@@ -177,9 +259,6 @@
     }
   }
 
-  /* ---------------------------------------------------------
-     Helpers date/heure
-  --------------------------------------------------------- */
   function dayKey(d) {
     var y = d.getFullYear();
     var m = d.getMonth() + 1;
@@ -230,9 +309,10 @@
   }
 
   /* ---------------------------------------------------------
-     Construit une "sub-box" pour un jour
-     - Tri: all-day en premier, puis par heure
-     - Heures: une seule boîte texte + <br> (ultra stable iOS 12)
+     Un jour (sub-box) + tri interne :
+     - anniversaires (journée) tout en haut
+     - autres all-day ensuite
+     - puis horaires
   --------------------------------------------------------- */
   function buildDaySection(dayDate, events) {
     var box = document.createElement("div");
@@ -247,9 +327,14 @@
     sep.className = "divider divider--tight";
     box.appendChild(sep);
 
-    // ✅ Tri: all-day en premier, puis par heure
     events.sort(function (a, b) {
+      // 1) Anniversaires d’abord
+      if (!!a.isBirthday !== !!b.isBirthday) return a.isBirthday ? -1 : 1;
+
+      // 2) All-day ensuite
       if (!!a.allDay !== !!b.allDay) return a.allDay ? -1 : 1;
+
+      // 3) Par heure
       return a.start - b.start;
     });
 
@@ -260,30 +345,33 @@
       row.className = "item-row";
 
       var left = document.createElement("div");
-      // ✅ iOS 12 safe : pas de -webkit-line-clamp
       left.className = "item-left clamp-2-safe";
-      left.textContent = ev.summary;
 
       var right = document.createElement("div");
       right.className = "item-right w-64 tabular";
 
       if (ev.allDay) {
         row.className = "item-row allday";
-        left.textContent = "📌 " + ev.summary;
 
-        var b = document.createElement("span");
-        b.className = "badge badge-allday";
-        b.textContent = "JOURNÉE";
-        right.appendChild(b);
-      } else {
-        // ✅ ULTRA-STABLE iPad Safari : une seule boîte texte + <br>
-        if (ev.end) {
-          right.innerHTML =
-            fmtTime(ev.start) +
-            "<br><span class='muted'>" + fmtTime(ev.end) + "</span>";
+        if (ev.isBirthday) {
+          left.textContent = "🎂 " + ev.summary;
+
+          var b = document.createElement("span");
+          b.className = "badge badge-allday";
+          b.textContent = "ANNIV";
+          right.appendChild(b);
         } else {
-          right.textContent = fmtTime(ev.start);
+          left.textContent = "📌 " + ev.summary;
+
+          var b2 = document.createElement("span");
+          b2.className = "badge badge-allday";
+          b2.textContent = "JOURNÉE";
+          right.appendChild(b2);
         }
+      } else {
+        // heures en 2 lignes ultra-stable (texte brut + \n)
+        right.textContent = fmtTime(ev.start) + (ev.end ? "\n" + fmtTime(ev.end) : "");
+        left.textContent = ev.summary;
       }
 
       row.appendChild(left);
