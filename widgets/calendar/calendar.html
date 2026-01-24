@@ -3,24 +3,7 @@
   <!-- Date du jour en haut (ex: Samedi 24 Janvier 2026) -->
   <div id="calToday" class="text-large text-center" style="margin-bottom:10px;"></div>
 
-  <div class="sub-box" id="dayBox1">
-    <div id="calDay1" class="small"></div>
-    <div id="calEvents1"></div>
-  </div>
-
-  <div class="sub-box" id="dayBox2">
-    <div id="calDay2" class="small"></div>
-    <div id="calEvents2"></div>
-  </div>
-
-  <div class="sub-box" id="dayBox3">
-    <div id="calDay3" class="small"></div>
-    <div id="calEvents3"></div>
-  </div>
-
-  <div class="sub-box" id="dayBox4">
-    <div id="calDay4" class="small"></div>
-    <div id="calEvents4"></div>
-  </div>
+  <!-- Conteneur dynamique : on ajoute autant de jours que possible -->
+  <div id="calList" style="display:flex;flex-direction:column;gap:12px;flex:1;min-height:0;overflow:hidden;"></div>
 
 </div>
