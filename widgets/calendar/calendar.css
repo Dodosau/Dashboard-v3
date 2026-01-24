@@ -1,63 +1,187 @@
 /* ---------------------------------------------------------
-   CALENDAR ONLY
-   Styles spécifiques au widget calendrier.
+   STYLE DES CARTES (widgets)
 --------------------------------------------------------- */
-
-/* ✅ FIX iPad Safari : stabilise la mise en page des items
-   On force une grille uniquement dans le calendrier (scopé à #calList)
-*/
-#calList .item-row {
-  display: grid;
-  grid-template-columns: 1fr 64px; /* colonne droite fixe */
-  column-gap: 12px;
-  align-items: start;
-  padding: 10px 0;
-}
-
-/* Si tu utilises w-56 ou w-72, on adapte la colonne droite */
-#calList .item-row.right-56 { grid-template-columns: 1fr 56px; }
-#calList .item-row.right-72 { grid-template-columns: 1fr 72px; }
-
-#calList .item-left {
-  min-width: 0;
-  line-height: 1.25; /* un poil plus grand = zéro chevauchement */
-}
-
-/* Colonne droite stable (2 lignes max) */
-#calList .item-right {
-  width: 64px; /* cohérent avec grid-template-columns */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-  line-height: 1.25;
-  white-space: nowrap;
-}
-
-/* Largeurs si tu changes w-xx */
-#calList .item-right.w-56 { width: 56px; }
-#calList .item-right.w-64 { width: 64px; }
-#calList .item-right.w-72 { width: 72px; }
-
-/* ✅ garantit que chaque ligne d'heure se comporte bien */
-#calList .item-right > div,
-#calList .item-right > span {
-  display: block;
-  line-height: 1.25;
+.card {
+  background: #171a21;
+  border-radius: 18px;
+  padding: 20px;
 }
 
 /* ---------------------------------------------------------
-   Événements "toute la journée" (distincts)
+   TITRES ET TEXTES SPÉCIFIQUES AUX WIDGETS
 --------------------------------------------------------- */
-#calList .item-row.allday {
-  background: rgba(46, 204, 113, 0.10);
-  border: 1px solid rgba(46, 204, 113, 0.25);
-  border-radius: 12px;
-  padding: 10px 10px;
+.title {
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0 0 10px;
 }
 
-.badge-allday {
-  background: rgba(46, 204, 113, 0.18);
-  color: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(46, 204, 113, 0.40);
+.small {
+  color: #a7b0c0;
+  font-size: 15px;
+}
+
+.temp {
+  font-size: 42px;
+  font-weight: 800;
+}
+
+/* ---------------------------------------------------------
+   ALIGNEMENTS / CENTRAGES (utilitaires)
+--------------------------------------------------------- */
+.text-center {
+  text-align: center;
+}
+
+.v-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------
+   SOUS-CASES (sub-box)
+--------------------------------------------------------- */
+.sub-box {
+  background: rgba(255,255,255,0.05);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ---------------------------------------------------------
+   LIGNES HORIZONTALES (row)
+--------------------------------------------------------- */
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* ---------------------------------------------------------
+   COLONNES INTERNES (col)
+--------------------------------------------------------- */
+.col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ---------------------------------------------------------
+   SÉPARATEUR VISUEL (générique)
+--------------------------------------------------------- */
+.divider {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.12;
+  margin: 10px 0;
+}
+
+.divider--tight {
+  margin: 6px 0;
+}
+
+.divider--strong {
+  opacity: 0.22;
+}
+
+/* ---------------------------------------------------------
+   COULEURS SOUS-CASES (bus, alertes, etc.)
+--------------------------------------------------------- */
+.sub-box.color-green {
+  background-color: #2ecc71 !important;
+  color: white !important;
+}
+
+.sub-box.color-orange {
+  background-color: #f39c12 !important;
+  color: white !important;
+}
+
+.sub-box.color-red {
+  background-color: #e74c3c !important;
+  color: white !important;
+}
+
+/* ---------------------------------------------------------
+   UTILITAIRES DE LISTE "GAUCHE / DROITE"
+   (générique, stable)
+   NOTE: le calendrier surcharge ces règles dans calendar.css
+--------------------------------------------------------- */
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.item-left {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.item-right {
+  flex: 0 0 auto;
+  text-align: right;
+  white-space: nowrap;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.item-right.w-56 { width: 56px; }
+.item-right.w-64 { width: 64px; }
+.item-right.w-72 { width: 72px; }
+
+/* ---------------------------------------------------------
+   CLAMP / TRONCATURE (2 lignes max)
+--------------------------------------------------------- */
+.clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Fallback ultra-stable (iPad iOS 12) */
+.clamp-2-safe {
+  overflow: hidden;
+  line-height: 1.2;
+  max-height: 2.4em; /* 2 lignes * 1.2em */
+}
+
+/* ---------------------------------------------------------
+   BADGES (génériques)
+--------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   CHIFFRES ALIGNÉS (heures, minutes, prix)
+--------------------------------------------------------- */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------
+   TEXTE SECONDAIRE
+--------------------------------------------------------- */
+.muted {
+  opacity: 0.75;
 }
