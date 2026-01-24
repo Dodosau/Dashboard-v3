@@ -1,50 +1,32 @@
 (function () {
 
-  /* ---------------------------------------------------------
-     POINT D’ENTRÉE : initialise le widget
-  --------------------------------------------------------- */
   function init() {
     var calToday = document.getElementById("calToday");
+    var calList = document.getElementById("calList");
+    if (!calToday || !calList) return;
 
-    var d1 = document.getElementById("calDay1");
-    var e1 = document.getElementById("calEvents1");
-    var d2 = document.getElementById("calDay2");
-    var e2 = document.getElementById("calEvents2");
-    var d3 = document.getElementById("calDay3");
-    var e3 = document.getElementById("calEvents3");
-    var d4 = document.getElementById("calDay4");
-    var e4 = document.getElementById("calEvents4");
+    // Date du jour en haut : "Samedi 24 Janvier 2026"
+    setTopDate(calToday);
 
-    if (!d1 || !e1) return;
-
-    /* ------------------------------
-       DATE DU JOUR EN HAUT
-       Format: "Samedi 24 Janvier 2026"
-    ------------------------------ */
-    if (calToday) {
-      var nowTop = new Date();
-
-      var jours = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-      var mois  = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
-
-      calToday.textContent =
-        jours[nowTop.getDay()] + " " +
-        nowTop.getDate() + " " +
-        mois[nowTop.getMonth()] + " " +
-        nowTop.getFullYear();
-    }
-
-    /* ------------------------------
-       Chargement ICS puis rendu
-    ------------------------------ */
     loadICS(function (events) {
-      render(events, [d1, e1], [d2, e2], [d3, e3], [d4, e4]);
-      hideEmptyDays();
+      renderAutoFit(calList, events);
     });
   }
 
+  function setTopDate(el) {
+    var now = new Date();
+    var jours = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+    var mois  = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
+    el.textContent =
+      jours[now.getDay()] + " " +
+      now.getDate() + " " +
+      mois[now.getMonth()] + " " +
+      now.getFullYear();
+  }
+
   /* ---------------------------------------------------------
-     CHARGEMENT DU FICHIER ICS (anti-cache Safari)
+     CHARGEMENT ICS (anti-cache Safari)
   --------------------------------------------------------- */
   function loadICS(cb) {
     var xhr = new XMLHttpRequest();
@@ -62,7 +44,7 @@
   }
 
   /* ---------------------------------------------------------
-     PARSE ICS → extraction des événements
+     PARSE ICS
   --------------------------------------------------------- */
   function parseICS(text) {
     var events = [];
@@ -83,13 +65,9 @@
         });
       }
     }
-
     return events;
   }
 
-  /* ---------------------------------------------------------
-     CONVERSION date ICS → Date JS
-  --------------------------------------------------------- */
   function parseICSTime(str) {
     return new Date(
       parseInt(str.substring(0, 4), 10),
@@ -101,160 +79,181 @@
   }
 
   /* ---------------------------------------------------------
-     RENDER : 4 jours, titres + séparateur + events
-     Layout générique (component.css):
-       - item-row
-       - item-left clamp-2
-       - item-right w-64 tabular
-       - muted
-       - divider divider--tight
+     RENDER "AUTO-FIT" : remplit autant que possible sans dépasser
   --------------------------------------------------------- */
-  function render(events, d1, d2, d3, d4) {
+  function renderAutoFit(listEl, events) {
     var now = new Date();
-    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // 4 jours : aujourd'hui + 3
-    var days = [];
-    for (var i = 0; i < 4; i++) {
-      days.push(new Date(today.getTime() + i * 86400000));
+    // Nettoie
+    listEl.innerHTML = "";
+
+    // Filtre: on garde les events non terminés
+    var upcoming = [];
+    for (var i = 0; i < events.length; i++) {
+      var ev = events[i];
+      if (ev.end && ev.end < now) continue;
+      upcoming.push(ev);
     }
 
-    // groupés par jour
-    var groups = [[], [], [], []];
+    // Trie par start
+    upcoming.sort(function (a, b) { return a.start - b.start; });
 
-    // filtre + classement par jour
+    // Groupe par date YYYY-MM-DD
+    var map = {};
+    var dates = [];
+
+    for (var i = 0; i < upcoming.length; i++) {
+      var ev = upcoming[i];
+      var key = dayKey(ev.start);
+      if (!map[key]) {
+        map[key] = [];
+        dates.push(key);
+      }
+      map[key].push(ev);
+    }
+
+    // Construit les sections du jour tant que ça rentre
+    // (si tu veux limiter à 30 jours au cas où, tu peux couper ici)
+    for (var di = 0; di < dates.length; di++) {
+      var key = dates[di];
+      var dayDate = keyToDate(key);
+
+      // Ignore les jours strictement avant aujourd'hui (sécurité)
+      var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (dayDate < today0) continue;
+
+      var section = buildDaySection(di, dayDate, map[key]);
+
+      listEl.appendChild(section);
+
+      // Test "ça dépasse ?"
+      // (listEl doit être en overflow:hidden + hauteur contrainte via flex)
+      if (listEl.scrollHeight > listEl.clientHeight) {
+        // On retire le dernier bloc ajouté et on stop
+        listEl.removeChild(section);
+        break;
+      }
+    }
+
+    // Si rien n'a été affiché (rare), on peut laisser vide ou afficher un message
+    if (listEl.children.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "small text-center";
+      empty.textContent = "Aucun événement à venir";
+      listEl.appendChild(empty);
+    }
+  }
+
+  /* ---------------------------------------------------------
+     UI helpers (format + blocs)
+  --------------------------------------------------------- */
+  function dayKey(d) {
+    var y = d.getFullYear();
+    var m = d.getMonth() + 1;
+    var dd = d.getDate();
+    if (m < 10) m = "0" + m;
+    if (dd < 10) dd = "0" + dd;
+    return y + "-" + m + "-" + dd;
+  }
+
+  function keyToDate(key) {
+    // key "YYYY-MM-DD"
+    var y = parseInt(key.substring(0, 4), 10);
+    var m = parseInt(key.substring(5, 7), 10) - 1;
+    var d = parseInt(key.substring(8, 10), 10);
+    return new Date(y, m, d);
+  }
+
+  function fmtDate(d) {
+    var dd = d.getDate();
+    var mm = d.getMonth() + 1;
+    var yy = d.getFullYear();
+    if (dd < 10) dd = "0" + dd;
+    if (mm < 10) mm = "0" + mm;
+    return dd + "/" + mm + "/" + yy;
+  }
+
+  function fmtTime(d) {
+    var h = d.getHours();
+    var m = d.getMinutes();
+    if (h < 10) h = "0" + h;
+    if (m < 10) m = "0" + m;
+    return h + ":" + m;
+  }
+
+  function weekday(d) {
+    var names = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    return names[d.getDay()];
+  }
+
+  function dayLabel(dayIndex, d) {
+    // dayIndex ici = ordre des dates qui ont des events (pas offset exact),
+    // donc on compare à aujourd'hui pour "Aujourd’hui/Demain"
+    var now = new Date();
+    var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    var diffDays = Math.round((d0 - today0) / 86400000);
+
+    if (diffDays === 0) return "Aujourd’hui — " + fmtDate(d);
+    if (diffDays === 1) return "Demain — " + fmtDate(d);
+    return weekday(d) + " — " + fmtDate(d);
+  }
+
+  function buildDaySection(dayIndex, dayDate, events) {
+    // Une section = une "sub-box" (fond léger) contenant
+    // titre du jour + séparateur + events en item-row
+    var box = document.createElement("div");
+    box.className = "sub-box";
+
+    var title = document.createElement("div");
+    title.className = "small";
+    title.textContent = dayLabel(dayIndex, dayDate);
+    box.appendChild(title);
+
+    var sep = document.createElement("div");
+    sep.className = "divider divider--tight";
+    box.appendChild(sep);
+
+    // events triés par heure
+    events.sort(function (a, b) { return a.start - b.start; });
+
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
 
-      // ignore les événements terminés
-      if (ev.end && ev.end < now) continue;
+      var row = document.createElement("div");
+      row.className = "item-row";
 
-      for (var d = 0; d < 4; d++) {
-        var day = days[d];
-        if (
-          ev.start.getFullYear() === day.getFullYear() &&
-          ev.start.getMonth() === day.getMonth() &&
-          ev.start.getDate() === day.getDate()
-        ) {
-          groups[d].push(ev);
-        }
-      }
+      var left = document.createElement("div");
+      left.className = "item-left clamp-2";
+      left.textContent = ev.summary;
+
+      var right = document.createElement("div");
+      right.className = "item-right w-64 tabular";
+
+      var tStart = document.createElement("div");
+      tStart.textContent = fmtTime(ev.start);
+
+      var tEnd = document.createElement("div");
+      tEnd.className = "muted";
+      tEnd.textContent = ev.end ? fmtTime(ev.end) : "";
+
+      right.appendChild(tStart);
+      right.appendChild(tEnd);
+
+      row.appendChild(left);
+      row.appendChild(right);
+
+      box.appendChild(row);
     }
 
-    // tri par heure de début
-    for (var g = 0; g < 4; g++) {
-      groups[g].sort(function (a, b) {
-        return a.start - b.start;
-      });
-    }
-
-    function fmtDate(d) {
-      var dd = d.getDate();
-      var mm = d.getMonth() + 1;
-      var yy = d.getFullYear();
-      if (dd < 10) dd = "0" + dd;
-      if (mm < 10) mm = "0" + mm;
-      return dd + "/" + mm + "/" + yy;
-    }
-
-    function fmtTime(d) {
-      var h = d.getHours();
-      var m = d.getMinutes();
-      if (h < 10) h = "0" + h;
-      if (m < 10) m = "0" + m;
-      return h + ":" + m;
-    }
-
-    function weekday(d) {
-      var names = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-      return names[d.getDay()];
-    }
-
-    function label(i, d) {
-      if (i === 0) return "Aujourd’hui — " + fmtDate(d);
-      if (i === 1) return "Demain — " + fmtDate(d);
-      return weekday(d) + " — " + fmtDate(d);
-    }
-
-    var slots = [d1, d2, d3, d4];
-
-    for (var i = 0; i < 4; i++) {
-      var dayEl = slots[i][0];
-      var evEl = slots[i][1];
-
-      // Titre de sous-case
-      dayEl.textContent = label(i, days[i]);
-
-      // Reset zone events
-      evEl.innerHTML = "";
-
-      // Séparateur juste sous le titre
-      var sep = document.createElement("div");
-      sep.className = "divider divider--tight";
-      evEl.appendChild(sep);
-
-      var list = groups[i];
-      if (list.length === 0) continue;
-
-      // Events
-      for (var j = 0; j < list.length; j++) {
-        var ev = list[j];
-
-        // Ligne "gauche / droite"
-        var row = document.createElement("div");
-        row.className = "item-row";
-
-        // Texte à gauche (2 lignes max)
-        var left = document.createElement("div");
-        left.className = "item-left clamp-2";
-        left.textContent = ev.summary;
-
-        // Heures à droite (2 lignes, alignées, largeur fixe)
-        var right = document.createElement("div");
-        right.className = "item-right w-64 tabular";
-
-        var tStart = document.createElement("div");
-        tStart.textContent = fmtTime(ev.start);
-
-        var tEnd = document.createElement("div");
-        tEnd.className = "muted";
-        tEnd.textContent = ev.end ? fmtTime(ev.end) : "";
-
-        right.appendChild(tStart);
-        right.appendChild(tEnd);
-
-        row.appendChild(left);
-        row.appendChild(right);
-
-        evEl.appendChild(row);
-      }
-    }
+    return box;
   }
 
   /* ---------------------------------------------------------
-     CACHE LES SOUS-CASES QUI N’ONT AUCUN ÉVÉNEMENT
-     (on cache si aucun .item-row)
-  --------------------------------------------------------- */
-  function hideEmptyDays() {
-    for (var i = 1; i <= 4; i++) {
-      var events = document.getElementById("calEvents" + i);
-      var box = document.getElementById("dayBox" + i);
-
-      if (events && box) {
-        var hasEvent = events.querySelector && events.querySelector(".item-row");
-        box.style.display = hasEvent ? "block" : "none";
-      }
-    }
-  }
-
-  /* ---------------------------------------------------------
-     AUTO-REFRESH
+     Auto-refresh
   --------------------------------------------------------- */
   setInterval(init, 60000);
 
-  /* ---------------------------------------------------------
-     LANCEMENT
-  --------------------------------------------------------- */
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
