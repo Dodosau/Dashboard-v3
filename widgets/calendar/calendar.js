@@ -204,15 +204,16 @@
       var right = document.createElement("div");
       right.className = "item-right w-64 tabular";
 
-      var tStart = document.createElement("div");
-      tStart.textContent = fmtTime(ev.start);
+var tStart = document.createElement("div");
+tStart.textContent = fmtTime(ev.start);
+right.appendChild(tStart);
 
-      var tEnd = document.createElement("div");
-      tEnd.className = "muted";
-      tEnd.textContent = ev.end ? fmtTime(ev.end) : "";
-
-      right.appendChild(tStart);
-      right.appendChild(tEnd);
+if (ev.end) {
+  var tEnd = document.createElement("div");
+  tEnd.className = "muted";
+  tEnd.textContent = fmtTime(ev.end);
+  right.appendChild(tEnd);
+}
 
       row.appendChild(left);
       row.appendChild(right);
