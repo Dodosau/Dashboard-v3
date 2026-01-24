@@ -1,58 +1,63 @@
 /* ---------------------------------------------------------
-   LAYOUT DASHBOARD (iPad-safe)
-   - Utilise --vh (défini par js/vh.js) pour une hauteur réelle Safari
-   - 2 colonnes (gauche / droite) comme ton layout actuel
-   - Chaque colonne est une grille de "slots" pour maîtriser combien de widgets rentrent
+   LAYOUT DASHBOARD (iPad Safari safe)
+   Utilise --vh (défini par js/vh.js) pour une hauteur exacte.
 --------------------------------------------------------- */
 
-/* Container global : plein écran visible */
+/* Container global */
 .container {
-  height: calc(var(--vh) * 100);  /* ✅ hauteur réelle iPad */
+  height: calc(var(--vh) * 100);   /* 🔥 hauteur réelle écran */
   display: flex;
   gap: 20px;
   padding: 20px;
   box-sizing: border-box;
 }
 
-/* Colonnes */
+/* Colonnes gauche / droite */
 .leftCol,
 .rightCol {
   flex: 1;
-  min-width: 0;                  /* évite les débordements flex */
+  min-width: 0;                     /* évite débordements flex */
   display: grid;
   gap: 20px;
   align-content: stretch;
 }
 
 /* ---------------------------------------------------------
-   MODES : nombre de "slots" verticaux par colonne
-   - mode-4 : 4 rangées par colonne (lisible)
-   - mode-5 : 5 rangées par colonne (compact)
-   -> Tu choisis en ajoutant la classe sur .container
+   MODES : nombre de rangées (slots verticaux)
 --------------------------------------------------------- */
 
+/* Mode lisible : 4 widgets par colonne */
 .container.mode-4 .leftCol,
 .container.mode-4 .rightCol {
   grid-template-rows: repeat(4, 1fr);
 }
 
+/* Mode compact : 5 widgets par colonne */
 .container.mode-5 .leftCol,
 .container.mode-5 .rightCol {
   grid-template-rows: repeat(5, 1fr);
 }
 
 /* ---------------------------------------------------------
-   Les widgets remplissent leur slot
+   Les widgets remplissent entièrement leur slot
 --------------------------------------------------------- */
 .leftCol > .card,
 .rightCol > .card {
   height: 100%;
-  overflow: hidden;              /* évite débordements visuels */
+  overflow: hidden;   /* évite débordements visuels */
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---------------------------------------------------------
-   UTILITAIRES : faire un widget plus grand
-   (à mettre sur la .card concernée)
-   - span-rows-2 : prend 2 slots en hauteur
+   UTILITAIRES DE TAILLE DE WIDGET
 --------------------------------------------------------- */
+
+/* Prend 2 rangées */
 .span-rows-2 { grid-row: span 2; }
+
+/* Prend 3 rangées */
+.span-rows-3 { grid-row: span 3; }
+
+/* 🔥 Prend 4 rangées (ex: calendrier colonne droite) */
+.span-rows-4 { grid-row: span 4; }
