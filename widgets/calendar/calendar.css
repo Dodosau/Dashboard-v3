@@ -1,0 +1,20 @@
+/* ---------------------------------------------------------
+   CALENDAR ONLY
+   Styles spécifiques au widget calendrier.
+   (Tout ce qui est "thème" calendrier va ici, pas dans components.css)
+--------------------------------------------------------- */
+
+/* Événement "toute la journée" : ressort visuellement */
+.item-row.allday {
+  background: rgba(46, 204, 113, 0.10);
+  border: 1px solid rgba(46, 204, 113, 0.25);
+  border-radius: 12px;
+  padding: 10px 10px;  /* remplace le padding de base de item-row */
+}
+
+/* Badge "JOURNÉE" spécifique */
+.badge-allday {
+  background: rgba(46, 204, 113, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(46, 204, 113, 0.40);
+}
