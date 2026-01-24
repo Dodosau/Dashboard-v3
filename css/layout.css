@@ -1,3 +1,58 @@
+/* ---------------------------------------------------------
+   LAYOUT DASHBOARD (iPad-safe)
+   - Utilise --vh (défini par js/vh.js) pour une hauteur réelle Safari
+   - 2 colonnes (gauche / droite) comme ton layout actuel
+   - Chaque colonne est une grille de "slots" pour maîtriser combien de widgets rentrent
+--------------------------------------------------------- */
 
-.container{display:flex;height:100%;padding:20px;gap:20px}
-.leftCol,.rightCol{display:flex;flex-direction:column;gap:20px;flex:1}
+/* Container global : plein écran visible */
+.container {
+  height: calc(var(--vh) * 100);  /* ✅ hauteur réelle iPad */
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Colonnes */
+.leftCol,
+.rightCol {
+  flex: 1;
+  min-width: 0;                  /* évite les débordements flex */
+  display: grid;
+  gap: 20px;
+  align-content: stretch;
+}
+
+/* ---------------------------------------------------------
+   MODES : nombre de "slots" verticaux par colonne
+   - mode-4 : 4 rangées par colonne (lisible)
+   - mode-5 : 5 rangées par colonne (compact)
+   -> Tu choisis en ajoutant la classe sur .container
+--------------------------------------------------------- */
+
+.container.mode-4 .leftCol,
+.container.mode-4 .rightCol {
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.container.mode-5 .leftCol,
+.container.mode-5 .rightCol {
+  grid-template-rows: repeat(5, 1fr);
+}
+
+/* ---------------------------------------------------------
+   Les widgets remplissent leur slot
+--------------------------------------------------------- */
+.leftCol > .card,
+.rightCol > .card {
+  height: 100%;
+  overflow: hidden;              /* évite débordements visuels */
+}
+
+/* ---------------------------------------------------------
+   UTILITAIRES : faire un widget plus grand
+   (à mettre sur la .card concernée)
+   - span-rows-2 : prend 2 slots en hauteur
+--------------------------------------------------------- */
+.span-rows-2 { grid-row: span 2; }
