@@ -5,7 +5,6 @@
     var calList = document.getElementById("calList");
     if (!calToday || !calList) return;
 
-    // Date du jour en haut : "Samedi 24 Janvier 2026"
     setTopDate(calToday);
 
     loadICS(function (events) {
@@ -25,13 +24,9 @@
       now.getFullYear();
   }
 
-  /* ---------------------------------------------------------
-     CHARGEMENT ICS (anti-cache Safari)
-  --------------------------------------------------------- */
   function loadICS(cb) {
     var xhr = new XMLHttpRequest();
     var url = "https://dodosau.github.io/Dashboard-v3/calendar.ics?v=" + Date.now();
-
     xhr.open("GET", url, true);
 
     xhr.onreadystatechange = function () {
@@ -43,9 +38,6 @@
     xhr.send();
   }
 
-  /* ---------------------------------------------------------
-     PARSE ICS
-  --------------------------------------------------------- */
   function parseICS(text) {
     var events = [];
     var blocks = text.split("BEGIN:VEVENT");
@@ -78,16 +70,12 @@
     );
   }
 
-  /* ---------------------------------------------------------
-     RENDER "AUTO-FIT" : remplit autant que possible sans dépasser
-  --------------------------------------------------------- */
   function renderAutoFit(listEl, events) {
     var now = new Date();
 
-    // Nettoie
     listEl.innerHTML = "";
 
-    // Filtre: on garde les events non terminés
+    // Events à venir (non terminés)
     var upcoming = [];
     for (var i = 0; i < events.length; i++) {
       var ev = events[i];
@@ -95,47 +83,43 @@
       upcoming.push(ev);
     }
 
-    // Trie par start
+    // Tri global
     upcoming.sort(function (a, b) { return a.start - b.start; });
 
-    // Groupe par date YYYY-MM-DD
+    // Groupe par jour (YYYY-MM-DD)
     var map = {};
-    var dates = [];
+    var orderedKeys = [];
 
     for (var i = 0; i < upcoming.length; i++) {
       var ev = upcoming[i];
       var key = dayKey(ev.start);
+
       if (!map[key]) {
         map[key] = [];
-        dates.push(key);
+        orderedKeys.push(key);
       }
       map[key].push(ev);
     }
 
-    // Construit les sections du jour tant que ça rentre
-    // (si tu veux limiter à 30 jours au cas où, tu peux couper ici)
-    for (var di = 0; di < dates.length; di++) {
-      var key = dates[di];
+    // Ajoute les jours tant que ça rentre
+    for (var k = 0; k < orderedKeys.length; k++) {
+      var key = orderedKeys[k];
       var dayDate = keyToDate(key);
 
-      // Ignore les jours strictement avant aujourd'hui (sécurité)
+      // ignore jours avant aujourd'hui (sécurité)
       var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       if (dayDate < today0) continue;
 
-      var section = buildDaySection(di, dayDate, map[key]);
-
+      var section = buildDaySection(dayDate, map[key]);
       listEl.appendChild(section);
 
-      // Test "ça dépasse ?"
-      // (listEl doit être en overflow:hidden + hauteur contrainte via flex)
+      // Stop si dépasse
       if (listEl.scrollHeight > listEl.clientHeight) {
-        // On retire le dernier bloc ajouté et on stop
         listEl.removeChild(section);
         break;
       }
     }
 
-    // Si rien n'a été affiché (rare), on peut laisser vide ou afficher un message
     if (listEl.children.length === 0) {
       var empty = document.createElement("div");
       empty.className = "small text-center";
@@ -144,9 +128,6 @@
     }
   }
 
-  /* ---------------------------------------------------------
-     UI helpers (format + blocs)
-  --------------------------------------------------------- */
   function dayKey(d) {
     var y = d.getFullYear();
     var m = d.getMonth() + 1;
@@ -157,7 +138,6 @@
   }
 
   function keyToDate(key) {
-    // key "YYYY-MM-DD"
     var y = parseInt(key.substring(0, 4), 10);
     var m = parseInt(key.substring(5, 7), 10) - 1;
     var d = parseInt(key.substring(8, 10), 10);
@@ -186,9 +166,7 @@
     return names[d.getDay()];
   }
 
-  function dayLabel(dayIndex, d) {
-    // dayIndex ici = ordre des dates qui ont des events (pas offset exact),
-    // donc on compare à aujourd'hui pour "Aujourd’hui/Demain"
+  function dayLabel(d) {
     var now = new Date();
     var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -199,22 +177,19 @@
     return weekday(d) + " — " + fmtDate(d);
   }
 
-  function buildDaySection(dayIndex, dayDate, events) {
-    // Une section = une "sub-box" (fond léger) contenant
-    // titre du jour + séparateur + events en item-row
+  function buildDaySection(dayDate, events) {
     var box = document.createElement("div");
     box.className = "sub-box";
 
     var title = document.createElement("div");
     title.className = "small";
-    title.textContent = dayLabel(dayIndex, dayDate);
+    title.textContent = dayLabel(dayDate);
     box.appendChild(title);
 
     var sep = document.createElement("div");
     sep.className = "divider divider--tight";
     box.appendChild(sep);
 
-    // events triés par heure
     events.sort(function (a, b) { return a.start - b.start; });
 
     for (var i = 0; i < events.length; i++) {
@@ -249,9 +224,6 @@
     return box;
   }
 
-  /* ---------------------------------------------------------
-     Auto-refresh
-  --------------------------------------------------------- */
   setInterval(init, 60000);
 
   if (document.readyState === "loading") {
