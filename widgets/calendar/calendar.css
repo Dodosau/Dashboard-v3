@@ -2,7 +2,39 @@
    CALENDAR ONLY — iPad Safari fixes + styles calendrier
 --------------------------------------------------------- */
 
-/* Layout robuste: 2 colonnes (texte + heures) */
+/* ---------------------------------------------------------
+   TYPO (plus lisible pour le calendrier)
+   - On augmente uniquement dans #calList
+--------------------------------------------------------- */
+
+/* Ligne "Aujourd’hui — 24/01/2026" (classe small dans ton JS) */
+#calList .small{
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Texte des événements */
+#calList .item-left{
+  font-size: 20px;
+  line-height: 1.25 !important;
+}
+
+/* Heures à droite */
+#calList .item-right{
+  font-size: 20px;
+  line-height: 1.35 !important;
+}
+
+/* Badges */
+#calList .badge{
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+/* ---------------------------------------------------------
+   Layout robuste: 2 colonnes (texte + heures)
+--------------------------------------------------------- */
 #calList .item-row{
   display: grid !important;
   grid-template-columns: 1fr 64px;
@@ -11,9 +43,9 @@
   padding: 10px 0;
 }
 
+/* Zone gauche: permet au texte de ne pas exploser la grille */
 #calList .item-left{
   min-width: 0;
-  line-height: 1.25 !important;
 }
 
 /* Colonne droite:
@@ -25,12 +57,12 @@
   text-align: right;
 
   white-space: pre;         /* ✅ IMPORTANT pour "\n" */
-  line-height: 1.35 !important;
 
   overflow: hidden;         /* ✅ évite les "fuites" iPad */
   max-height: 2.7em;        /* ~ 2 lignes */
 }
 
+/* Si un jour tu mets des spans dans la colonne droite */
 #calList .item-right *{
   line-height: 1.35 !important;
   margin: 0 !important;
