@@ -41,11 +41,10 @@
   function init() {
     var tempNow = document.getElementById("tempNow");
     var weatherIcon = document.getElementById("weatherIcon");
-    var weatherText = document.getElementById("weatherText");
     var tempRange = document.getElementById("tempRange");
     var precipProb = document.getElementById("precipProb");
 
-    if (!tempNow || !weatherIcon || !weatherText || !tempRange || !precipProb) {
+    if (!tempNow || !weatherIcon || !tempRange || !precipProb) {
       return;
     }
 
@@ -67,13 +66,12 @@
 
       xhr(url, function (err, d) {
         if (err || !d || !d.current) {
-          weatherText.textContent = "Météo indisponible";
+          precipProb.textContent = "—%";
           return;
         }
 
         tempNow.textContent = Math.round(d.current.temperature_2m) + "°C";
         weatherIcon.textContent = icon(d.current.weather_code);
-        weatherText.textContent = text(d.current.weather_code);
 
         if (d.daily && d.daily.temperature_2m_min) {
           tempRange.textContent =
