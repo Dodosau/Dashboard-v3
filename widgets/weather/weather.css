@@ -1,0 +1,33 @@
+/* ---------------------------------------------------------
+   WEATHER ONLY — styles widget météo
+--------------------------------------------------------- */
+
+/* Icone météo plus visible */
+.weather .icon {
+  font-size: 64px;
+  line-height: 1;
+}
+
+/* Température principale */
+.weather .temp {
+  font-size: 46px;
+}
+
+/* Valeurs (précipitation + min/max) */
+.weather .text-medium {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.weather .weather-precip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.weather .weather-range {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+}
