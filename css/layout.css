@@ -10,7 +10,7 @@
   gap: 20px;
   padding: 20px;
   box-sizing: border-box;
-  /* Source unique pour le pourcentage des colonnes : les eux pourcentages additionnés doivent donner 100% */
+  /* Source unique pour le pourcentage des colonnes : les deux pourcentages additionnés doivent donner 100% */
   --left-col-width: 40%;
   --right-col-width: 60%;
 }
