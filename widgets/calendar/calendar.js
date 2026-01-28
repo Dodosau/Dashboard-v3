@@ -297,12 +297,15 @@
     return names[d.getDay()];
   }
 
-  function dayLabel(d) {
+  function dayDiff(d) {
     var now = new Date();
     var today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    var diffDays = Math.round((d0 - today0) / 86400000);
+    return Math.round((d0 - today0) / 86400000);
+  }
 
+  function dayLabel(d) {
+    var diffDays = dayDiff(d);
     if (diffDays === 0) return "Aujourd’hui — " + fmtDate(d);
     if (diffDays === 1) return "Demain — " + fmtDate(d);
     return weekday(d) + " — " + fmtDate(d);
@@ -314,6 +317,9 @@
   function buildDaySection(dayDate, events) {
     var box = document.createElement("div");
     box.className = "sub-box";
+    var diffDays = dayDiff(dayDate);
+    if (diffDays === 0) box.className += " sub-box--today";
+    if (diffDays === 1) box.className += " sub-box--tomorrow";
 
     var title = document.createElement("div");
     title.className = "small";
