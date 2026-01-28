@@ -306,8 +306,8 @@
 
   function dayLabel(d) {
     var diffDays = dayDiff(d);
-    if (diffDays === 0) return "Aujourd’hui — " + fmtDate(d);
-    if (diffDays === 1) return "Demain — " + fmtDate(d);
+    if (diffDays === 0) return "AUJOURD'HUI — " + fmtDate(d);
+    if (diffDays === 1) return "DEMAIN — " + fmtDate(d);
     return weekday(d) + " — " + fmtDate(d);
   }
 
@@ -349,6 +349,7 @@
 
       var left = document.createElement("div");
       left.className = "item-left clamp-2-safe";
+      if (diffDays === 0) left.className += " item-left--today";
 
       var right = document.createElement("div");
       right.className = "item-right w-64 tabular";
