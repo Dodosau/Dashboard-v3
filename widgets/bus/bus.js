@@ -67,8 +67,8 @@
   function init() {
     var busNext = document.getElementById("busNext");
     var busNext2 = document.getElementById("busNext2");
-    var box1 = document.getElementById("busBox1");
-    var box2 = document.getElementById("busBox2");
+    var box1 = document.getElementById("busNextBox");
+    var box2 = document.getElementById("busNext2Box");
 
     if (!busNext || !busNext2 || !box1 || !box2) return;
 
@@ -93,10 +93,7 @@
         var m3 = toMinutes(d.departure3TimeUnix, now);
 
         // ===============================
-        // SHIFT "PROPRE" :
-        // - on retire ce qui est <= 0 (bus déjà passé ou "à 0")
-        // - on garde l’ordre t1 -> t2 -> t3
-        // - on prend les 2 premiers restants
+        // SHIFT "PROPRE"
         // ===============================
         var list = [];
 
@@ -107,15 +104,9 @@
         var a = list.length > 0 ? list[0] : null;
         var b = list.length > 1 ? list[1] : null;
 
-        // ===============================
-        // Affichage (2 cases seulement)
-        // ===============================
         busNext.textContent = a != null ? a + " min" : "—";
         busNext2.textContent = b != null ? b + " min" : "—";
 
-        // ===============================
-        // Couleurs
-        // ===============================
         if (a != null) applyColor(box1, a);
         else clearColor(box1);
 
