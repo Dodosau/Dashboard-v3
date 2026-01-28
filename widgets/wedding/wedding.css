@@ -1,0 +1,78 @@
+/* ---------------------------------------------------------
+   WEDDING ONLY — style festif
+--------------------------------------------------------- */
+.wedding {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #3a1c50 0%, #6c2d73 45%, #f2b86b 100%);
+  box-shadow: 0 10px 30px rgba(242, 184, 107, 0.25);
+}
+
+.wedding::before,
+.wedding::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 2px, transparent 3px) 0 0 / 32px 32px,
+    radial-gradient(circle, rgba(255, 255, 255, 0.2) 0 2px, transparent 3px) 16px 16px / 36px 36px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.wedding::after {
+  opacity: 0.25;
+  transform: rotate(12deg);
+}
+
+.wedding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wedding-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.wedding-emoji {
+  font-size: 28px;
+}
+
+.wedding-count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.wedding-days {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #fff7e6;
+  text-shadow: 0 6px 18px rgba(255, 215, 142, 0.35);
+  animation: weddingPulse 2.4s ease-in-out infinite;
+}
+
+.wedding-days-label {
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.wedding-subtitle {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes weddingPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
