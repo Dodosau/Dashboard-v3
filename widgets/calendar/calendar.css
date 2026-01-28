@@ -114,11 +114,21 @@
    car .sub-box global a flex:1
 --------------------------------------------------------- */
 #calList .sub-box--today{
-  background: rgba(2547, 202, 24, 0.8);
+  background: rgba(255, 202, 24, 0.8); /* jaune pastel */
+}
+
+/* Couleur complémentaire du fond (jaune -> bleu) */
+#calList .sub-box--today .small{
+  color: #0033FF;
 }
 
 #calList .sub-box--tomorrow{
-  background: rgba(155, 205, 255, 0.5);
+  background: rgba(155, 205, 255, 0.5); /* bleu pastel */
+}
+
+/* Couleur complémentaire du fond (bleu -> orangé) */
+#calList .sub-box--tomorrow .small{
+  color: #FF8A3D;
 }
 
 #calList {
