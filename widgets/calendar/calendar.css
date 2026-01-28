@@ -114,11 +114,11 @@
    car .sub-box global a flex:1
 --------------------------------------------------------- */
 #calList .sub-box--today{
-  background: rgba(255, 235, 140, 0.28);
+  background: rgba(2547, 202, 24, 0.8);
 }
 
 #calList .sub-box--tomorrow{
-  background: rgba(155, 205, 255, 0.25);
+  background: rgba(155, 205, 255, 0.5);
 }
 
 #calList {
