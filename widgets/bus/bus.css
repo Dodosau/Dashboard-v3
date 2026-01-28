@@ -17,19 +17,9 @@
   font-weight: 900;
 }
 
-.bus .bus-times {
-  flex-direction: row;
-  gap: 12px;
-  align-items: stretch;
-}
-
 .bus .bus-time {
-  flex: 1;
-  border-radius: 10px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  gap: 6px;
 }
 
 .bus .bus-time-value {
