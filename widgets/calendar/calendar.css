@@ -9,26 +9,26 @@
 
 /* Ligne "Aujourd’hui — 24/01/2026" (classe small dans ton JS) */
 #calList .small{
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
 }
 
 /* Texte des événements */
 #calList .item-left{
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1.25 !important;
 }
 
 /* Heures à droite */
 #calList .item-right{
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1.35 !important;
 }
 
 /* Badges */
 #calList .badge{
-  font-size: 14px;
-  padding: 4px 8px;
+  font-size: 16px;
+  padding: 6px 10px;
   border-radius: 8px;
 }
 
@@ -40,7 +40,7 @@
   grid-template-columns: 1fr 64px;
   column-gap: 12px;
   align-items: start;
-  padding: 10px 0;
+  padding: 12px 0;
 }
 
 /* Zone gauche: permet au texte de ne pas exploser la grille */
@@ -76,7 +76,7 @@
   background: rgba(46, 204, 113, 0.10);
   border: 1px solid rgba(46, 204, 113, 0.25);
   border-radius: 12px;
-  padding: 10px 10px;
+  padding: 12px 12px;
 }
 
 /* Badge all-day (vert) */
@@ -94,7 +94,7 @@
   background: rgba(255, 105, 180, 0.10);
   border: 1px solid rgba(255, 105, 180, 0.35);
   border-radius: 12px;
-  padding: 10px 10px;
+  padding: 12px 12px;
 }
 
 /* Badge anniversaire (rose) */
@@ -108,6 +108,14 @@
    FIX iPad iOS12 : empêcher les jours (sub-box) de se superposer
    car .sub-box global a flex:1
 --------------------------------------------------------- */
+#calList .sub-box--today{
+  background: rgba(255, 235, 140, 0.28);
+}
+
+#calList .sub-box--tomorrow{
+  background: rgba(155, 205, 255, 0.25);
+}
+
 #calList {
   display: block !important;   /* on sort du flex-column */
 }
