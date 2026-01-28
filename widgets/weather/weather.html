@@ -4,8 +4,6 @@
 
     <!-- Sous-case gauche -->
     <div class="sub-box col text-center">
-      <div class="title">Météo – Montréal</div>
-
       <div class="icon" id="weatherIcon">—</div>
 
       <div class="temp" id="tempNow">—°C</div>
@@ -13,13 +11,15 @@
 
     <!-- Sous-case droite -->
     <div class="sub-box col">
-      <div class="small" id="weatherText">—</div>
+      <div class="weather-precip">
+        <div class="small">Précipitation</div>
+        <div class="text-medium" id="precipProb">—%</div>
+      </div>
 
-      <div class="small">Risque de précipitation</div>
-      <div class="text-medium" id="precipProb">—%</div>
-
-      <div class="small">Aujourd’hui</div>
-      <div class="text-medium" id="tempRange">—</div>
+      <div class="weather-range">
+        <div class="small">Min / Max</div>
+        <div class="text-medium" id="tempRange">—</div>
+      </div>
     </div>
 
   </div>
