@@ -1,0 +1,38 @@
+/* ---------------------------------------------------------
+   BUS ONLY — layout réorganisé
+--------------------------------------------------------- */
+.bus .bus-label {
+  justify-content: center;
+  gap: 6px;
+}
+
+.bus .bus-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.bus .bus-number {
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.bus .bus-times {
+  flex-direction: row;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.bus .bus-time {
+  flex: 1;
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bus .bus-time-value {
+  font-size: 28px;
+  font-weight: 800;
+}
