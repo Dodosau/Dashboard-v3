@@ -70,6 +70,7 @@
     var box1 = document.getElementById("busNextBox");
     var box2 = document.getElementById("busNext2Box");
 
+
     if (!busNext || !busNext2 || !box1 || !box2) return;
 
     function refresh() {
