@@ -1,4 +1,3 @@
-
 window.onload=function(){
  window.includeAll(function(widgets){
   for(var i=0;i<widgets.length;i++){
