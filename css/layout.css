@@ -10,12 +10,22 @@
   gap: 20px;
   padding: 20px;
   box-sizing: border-box;
+  /* Source unique pour le pourcentage des colonnes */
+  --left-col-width: 50%;
+  --right-col-width: 50%;
 }
 
 /* Colonnes gauche / droite */
-.leftCol,
+.leftCol {
+  flex: 0 0 var(--left-col-width);
+  min-width: 0;                     /* évite débordements flex */
+  display: grid;
+  gap: 20px;
+  align-content: stretch;
+}
+
 .rightCol {
-  flex: 1;
+  flex: 0 0 var(--right-col-width);
   min-width: 0;                     /* évite débordements flex */
   display: grid;
   gap: 20px;
