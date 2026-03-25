@@ -850,6 +850,61 @@ X-APPLE-CREATOR-IDENTITY:com.apple.mobilecal
 X-APPLE-CREATOR-TEAM-IDENTITY:0000000000
 END:VEVENT
 BEGIN:VEVENT
+ATTENDEE;CN=Anthony GALLEGO;CUTYPE=INDIVIDUAL;EMAIL=anthony.d.gallego@gma
+ il.com;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGENT=N
+ ONE;X-NUM-GUESTS=0:mailto:anthony.d.gallego@gmail.com
+ATTENDEE;CN=Guillaume LEROY;CUTYPE=INDIVIDUAL;EMAIL=guillaumeleroy.76000@
+ gmail.com;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGEN
+ T=NONE;X-NUM-GUESTS=0:mailto:guillaumeleroy.76000@gmail.com
+ATTENDEE;CN=alex_heb@msn.com;CUTYPE=INDIVIDUAL;EMAIL=alex_heb@msn.com;PAR
+ TSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGENT=NONE;X-NUM-
+ GUESTS=0:mailto:alex_heb@msn.com
+ATTENDEE;CN=doriansauzede@gmail.com;CUTYPE=INDIVIDUAL;EMAIL=doriansauzede
+ @gmail.com;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE
+ -AGENT=NONE;X-NUM-GUESTS=0:mailto:doriansauzede@gmail.com
+ATTENDEE;CN=eflaily@yahoo.com;CUTYPE=INDIVIDUAL;EMAIL=eflaily@yahoo.com;P
+ ARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGENT=NONE;
+ X-NUM-GUESTS=0:mailto:eflaily@yahoo.com
+ATTENDEE;CN=graziella.bertin@gmail.com;CUTYPE=INDIVIDUAL;EMAIL=graziella.
+ bertin@gmail.com;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDU
+ LE-AGENT=NONE;X-NUM-GUESTS=0:mailto:graziella.bertin@gmail.com
+ATTENDEE;CN=jeremiedesrosiers2@gmail.com;CUTYPE=INDIVIDUAL;EMAIL=jeremied
+ esrosiers2@gmail.com;PARTSTAT=DECLINED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SC
+ HEDULE-AGENT=NONE;X-NUM-GUESTS=0:mailto:jeremiedesrosiers2@gmail.com
+ATTENDEE;CN=lcrosne@gmail.com;CUTYPE=INDIVIDUAL;EMAIL=lcrosne@gmail.com;P
+ ARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGENT=NONE;
+ X-NUM-GUESTS=0:mailto:lcrosne@gmail.com
+ATTENDEE;CN=medtahar.bensmida@gmail.com;CUTYPE=INDIVIDUAL;EMAIL=medtahar.
+ bensmida@gmail.com;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHE
+ DULE-AGENT=NONE;X-NUM-GUESTS=0:mailto:medtahar.bensmida@gmail.com
+ATTENDEE;CN=romainpirosa@hotmail.fr;CUTYPE=INDIVIDUAL;EMAIL=romainpirosa@
+ hotmail.fr;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGE
+ NT=NONE;X-NUM-GUESTS=0:mailto:romainpirosa@hotmail.fr
+ATTENDEE;CN=t.filippi@hotmail.com;CUTYPE=INDIVIDUAL;EMAIL=t.filippi@hotma
+ il.com;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-AGENT=N
+ ONE;X-NUM-GUESTS=0:mailto:t.filippi@hotmail.com
+ATTENDEE;CN=william9899@hotmail.com;CUTYPE=INDIVIDUAL;EMAIL=william9899@h
+ otmail.com;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE
+ -AGENT=NONE;X-NUM-GUESTS=0:mailto:william9899@hotmail.com
+CREATED:20260317T232535Z
+DESCRIPTION:Pour cette année\, on va faire un repas de Pâques façon "potl
+ uck". \nTony et moi nous occupons du plat principal (gigot d'agneau avec
+  ses légumes).\n\nÉcrivez-nous pour nous dire ce que vous voulez prendre
+  en charge et amener qu'on se coordonne.
+DTEND;TZID=America/Toronto:20260405T150000
+DTSTAMP:20260324T234526Z
+DTSTART;TZID=America/Toronto:20260405T110000
+LAST-MODIFIED:20260324T234327Z
+LOCATION:2048a rue de la Visitation\, Montréal\, QC\, H2L 3C7
+ORGANIZER;CN=Guillaume LEROY;EMAIL=guillaumeleroy.76000@gmail.com;SCHEDUL
+ E-AGENT=NONE:mailto:guillaumeleroy.76000@gmail.com
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Repas de Pâques
+UID:25ccf058-9b2f-4bbf-8045-53097121f837
+X-MICROSOFT-CDO-OWNERAPPTID:-653083929
+END:VEVENT
+BEGIN:VEVENT
 ATTENDEE;CUTYPE=UNKNOWN;EMAIL=dorian.sauzede@gmail.com;PARTSTAT=ACCEPTED:
  MAILTO:dorian.sauzede@gmail.com
 CREATED:20240326T201100Z
