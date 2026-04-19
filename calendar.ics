@@ -6070,6 +6070,23 @@ X-APPLE-CREATOR-IDENTITY:com.apple.mobilecal
 X-APPLE-CREATOR-TEAM-IDENTITY:0000000000
 END:VEVENT
 BEGIN:VEVENT
+DESCRIPTION:Référence de réservation: ZNIUYO\n\nDe Marseille (Marseille P
+ rovence\, Terminal 1)\nHeure de départ: 19:15\n\nÀ Rome (Fiumicino\, Ter
+ minal 1)\nHeure d'arrivée: 20:40\n\nClasse: Economy\n\nVoulez-vous modif
+ ier votre vol ou réserver des prestations supplémentaires ?\nCliquez sim
+ plement sur « Mes réservations » dans votre compte client.\n\n/?utm_sour
+ ce=addtocalendar&utm_medium=referral
+DTEND:20260621T184000Z
+DTSTAMP:20260419T182717Z
+DTSTART:20260621T171500Z
+LAST-MODIFIED:20260419T182715Z
+LOCATION:Marseille (Marseille Provence
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Vol AZ337: MRS - FCO
+UID:ZNIUYO_0
+END:VEVENT
+BEGIN:VEVENT
 CLASS:PUBLIC
 CREATED:20251124T155216Z
 DTEND;TZID=America/Toronto:20260114T103000
