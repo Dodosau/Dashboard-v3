@@ -133,6 +133,84 @@ UID:03CB87B5-1CDF-41E1-A92C-3618E82514A2
 URL;VALUE=URI:
 END:VEVENT
 BEGIN:VEVENT
+ATTENDEE;CN="Sauzède Dorian";CUTYPE=UNKNOWN;EMAIL=dorian.sauzede@gmail.co
+ m;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;SCHEDULE-AGENT=NONE:mailto:dori
+ an.sauzede@gmail.com
+CLASS:PUBLIC
+DESCRIPTION;LANGUAGE=en-US:Nom d'événement\nRencontre suivi tervene\n\nLi
+ eu: Ceci est une conférence en ligne Microsoft Teams.\n\nVous pouvez rej
+ oindre cette réunion à partir de votre ordinateur\, tablette ou smartpho
+ ne.\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_OGUzNGNjNTkt
+ NGQxOC00OGEzLWI4ODktZmEwMWU0MDQ5NTY2%40thread.v2/0?context=%7b%22Tid%22%
+ 3a%22cd602454-192c-45bb-b058-f2e52a5ac37a%22%2c%22Oid%22%3a%22fb8b33bf-9
+ 1ac-4fab-8b4a-81e07170b41a%22%7d\n\nVous pouvez également le faire depui
+ s votre téléphone.\nCA: +1 647 794 5676\nID de conférence : 557 642 55#\
+ n\nVeuillez partager tout ce qui pourra être utile à la préparation de n
+ otre réunion.:\nJe travaille régulièrement avec des entreprises manufact
+ urières\, notamment des fonderies d’aluminium et des centres d’usinage.\
+ n\nCe que j’ai souvent remarqué sur le terrain\, c’est qu’il y a beaucou
+ p de bonnes idées d’amélioration continue\, mais que l’information circu
+ le parfois difficilement entre les équipes et les différents niveaux de 
+ l’entreprise\, simplement parce que les bons outils ne sont pas toujours
+  en place.\n\nC’est justement ce que je trouve intéressant chez Tervene 
+ : vous apportez une solution innovante à un problème très concret que j’
+ ai pu observer directement dans plusieurs entreprises avec lesquelles j’
+ ai travaillé.\n\nJe serais vraiment intéressé d’en discuter davantage av
+ ec vous.\n\nMotif de la replanification\nJ’ai un impératif professionnel
+  qui s’est ajouté vendredi matin\, je dois donc déplacer notre rencontre
+  en après-midi. Merci pour votre compréhension !\n\nSouhaitez-vous appor
+ ter des modifications à cet événement? Annuler<https://calendly.com/canc
+ ellations/4dfcc43c-68b1-418f-90e4-f91472980a88> Replanifier<https://cale
+ ndly.com/reschedulings/4dfcc43c-68b1-418f-90e4-f91472980a88>\n
+DTEND;TZID=America/Toronto:20260828T160000
+DTSTAMP:20260828T185850Z
+DTSTART;TZID=America/Toronto:20260828T150000
+LAST-MODIFIED:20260828T185848Z
+LOCATION;LANGUAGE=en-US:https://calendly.com/events/c34c6764-f4d7-4489-a5
+ 8c-08b3ab0c6418/microsoft_teams
+ORGANIZER;CN=Anthony Lesage;EMAIL=alesage@tervene.com;SCHEDULE-AGENT=CLIE
+ NT:mailto:alesage@tervene.com
+PRIORITY:5
+SEQUENCE:2
+STATUS:CONFIRMED
+SUMMARY;LANGUAGE=en-US:Sauzède Dorian et Anthony Lesage
+UID:040000008200E00074C5B7101A82E00800000000FE7E000AA434DD010000000000000
+ 00010000000929DAF1DB43C7E44BC4EEE34BA6FBD90
+X-MICROSOFT-CDO-APPT-SEQUENCE:2
+X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE
+X-MICROSOFT-CDO-IMPORTANCE:1
+X-MICROSOFT-CDO-INSTTYPE:0
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+X-MICROSOFT-CDO-OWNERAPPTID:2124990735
+X-MICROSOFT-DISALLOW-COUNTER:FALSE
+X-MICROSOFT-DONOTFORWARDMEETING:FALSE
+X-MICROSOFT-ISRESPONSEREQUESTED:TRUE
+X-MICROSOFT-LOCATIONDISPLAYNAME:https://calendly.com/events/c34c6764-f4d7
+ -4489-a58c-08b3ab0c6418/microsoft_teams
+X-MICROSOFT-LOCATIONS:[{"DisplayName":"https://calendly.com/events/c34c67
+ 64-f4d7-4489-a58c-08b3ab0c6418/microsoft_teams"\,"LocationAnnotation":""
+ \,"LocationUri":""\,"LocationStreet":""\,"LocationCity":""\,"LocationSta
+ te":""\,"LocationCountry":""\,"LocationPostalCode":""\,"LocationFullAddr
+ ess":""}]
+X-MICROSOFT-LOCATIONSOURCE:None
+X-MICROSOFT-ONLINEMEETINGCONFERENCEID:55764255
+X-MICROSOFT-ONLINEMEETINGINFORMATION:{"OnlineMeetingChannelId":null\,"Onl
+ ineMeetingProvider":3}
+X-MICROSOFT-ONLINEMEETINGTOLLNUMBER:+1 647-794-5676
+X-MICROSOFT-REQUESTEDATTENDANCEMODE:DEFAULT
+X-MICROSOFT-SCHEDULINGSERVICEUPDATEURL:https://api.scheduler.teams.micros
+ oft.com/teams/cd602454-192c-45bb-b058-f2e52a5ac37a/fb8b33bf-91ac-4fab-8b
+ 4a-81e07170b41a/19_meeting_OGUzNGNjNTktNGQxOC00OGEzLWI4ODktZmEwMWU0MDQ5N
+ TY2@thread.v2/0
+X-MICROSOFT-SKYPETEAMSMEETINGURL:https://teams.microsoft.com/l/meetup-joi
+ n/19%3ameeting_OGUzNGNjNTktNGQxOC00OGEzLWI4ODktZmEwMWU0MDQ5NTY2%40thread
+ .v2/0?context=%7b%22Tid%22%3a%22cd602454-192c-45bb-b058-f2e52a5ac37a%22%
+ 2c%22Oid%22%3a%22fb8b33bf-91ac-4fab-8b4a-81e07170b41a%22%7d
+X-MICROSOFT-SKYPETEAMSPROPERTIES:{"cid":"19:meeting_OGUzNGNjNTktNGQxOC00O
+ GEzLWI4ODktZmEwMWU0MDQ5NTY2@thread.v2"\,"rid":0\,"mid":0\,"uid":null\,"p
+ rivate":true\,"type":0}
+END:VEVENT
+BEGIN:VEVENT
 CREATED:20260322T174033Z
 DTEND;TZID=America/Toronto:20260330T130000
 DTSTAMP:20260322T174034Z
