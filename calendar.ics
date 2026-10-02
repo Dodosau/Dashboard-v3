@@ -133,6 +133,83 @@ UID:03CB87B5-1CDF-41E1-A92C-3618E82514A2
 URL;VALUE=URI:
 END:VEVENT
 BEGIN:VEVENT
+ATTENDEE;CN="Dorian Sauzède";CUTYPE=UNKNOWN;EMAIL=dorian.sauzede@gmail.co
+ m;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;SCHEDULE-AGENT=NONE:mailto:dori
+ an.sauzede@gmail.com
+CLASS:PUBLIC
+DESCRIPTION;LANGUAGE=en-US:Nom d'événement\nMise en situation — Tervene\n
+ \nSouhaitez-vous apporter des modifications à cet événement? Annuler<htt
+ ps://calendly.com/cancellations/eff22cb9-bfa1-4914-8354-9fb788470847> Re
+ planifier<https://calendly.com/reschedulings/eff22cb9-bfa1-4914-8354-9fb
+ 788470847>\n____________________________________________________________
+ ____________________\nRéunion Microsoft Teams\nRejoindre : https://teams
+ .microsoft.com/meet/292162637143082?p=RZLUCEwJH31LYcfRKv\nNuméro de réun
+ ion : 292 162 637 143 082\nCode secret : 4Uh3Ug6g\n_____________________
+ ___________\nBesoin d'aide ?<https://aka.ms/JoinTeamsMeeting?omkt=fr-FR>
+  | Référence système<https://teams.microsoft.com/l/meetup-join/19%3ameet
+ ing_NzYwYTRkM2QtMDRkNC00M2ZiLWJhZDgtMjUxZjQyYjEyZGI3%40thread.v2/0?conte
+ xt=%7b%22Tid%22%3a%22cd602454-192c-45bb-b058-f2e52a5ac37a%22%2c%22Oid%22
+ %3a%22fb8b33bf-91ac-4fab-8b4a-81e07170b41a%22%7d>\nParticiper par téléph
+ one\n+1 647-794-5676\,\,734724140#<tel:+16477945676\,\,734724140#> Canad
+ a\, Toronto\nTrouver un numéro local<https://dialin.teams.cloud.microsof
+ t/ecab2ddb-f4e6-4ea9-b27d-f8519a268f27?id=734724140>\nNuméro de conféren
+ ce téléphonique : 734 724 140#\nPour les organisateurs : Options de réun
+ ion<https://teams.microsoft.com/meetingOptions/?organizerId=fb8b33bf-91a
+ c-4fab-8b4a-81e07170b41a&tenantId=cd602454-192c-45bb-b058-f2e52a5ac37a&t
+ hreadId=19_meeting_NzYwYTRkM2QtMDRkNC00M2ZiLWJhZDgtMjUxZjQyYjEyZGI3@thre
+ ad.v2&messageId=0&language=fr-FR> | Réinitialiser le code PIN d'appel<ht
+ tps://dialin.teams.cloud.microsoft/usp/pstnconferencing>\n[Company Logo]
+ \n______________________________________________________________________
+ __________\n
+DTEND;TZID=America/Toronto:20261007T100000
+DTSTAMP:20261002T120526Z
+DTSTART;TZID=America/Toronto:20261007T090000
+LAST-MODIFIED:20261002T120525Z
+LOCATION;LANGUAGE=en-US:https://calendly.com/events/c29d3425-f2a5-4d36-a4
+ 05-b2662996ef42/microsoft_teams
+ORGANIZER;CN=Anthony Lesage;EMAIL=alesage@tervene.com;SCHEDULE-AGENT=CLIE
+ NT:mailto:alesage@tervene.com
+PRIORITY:5
+SEQUENCE:1
+STATUS:CONFIRMED
+SUMMARY;LANGUAGE=en-US:Dorian Sauzède et Anthony Lesage
+UID:040000008200E00074C5B7101A82E00800000000C366D9AC6552DD010000000000000
+ 00010000000D8A8534CE885504B8A3024D59C26A177
+X-MICROSOFT-CDO-APPT-SEQUENCE:1
+X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE
+X-MICROSOFT-CDO-IMPORTANCE:1
+X-MICROSOFT-CDO-INSTTYPE:0
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+X-MICROSOFT-CDO-OWNERAPPTID:2125074442
+X-MICROSOFT-DISALLOW-COUNTER:FALSE
+X-MICROSOFT-DONOTFORWARDMEETING:FALSE
+X-MICROSOFT-ISRESPONSEREQUESTED:TRUE
+X-MICROSOFT-LOCATIONDISPLAYNAME:https://calendly.com/events/c29d3425-f2a5
+ -4d36-a405-b2662996ef42/microsoft_teams
+X-MICROSOFT-LOCATIONS:[{"DisplayName":"https://calendly.com/events/c29d34
+ 25-f2a5-4d36-a405-b2662996ef42/microsoft_teams"\,"LocationAnnotation":""
+ \,"LocationUri":""\,"LocationStreet":""\,"LocationCity":""\,"LocationSta
+ te":""\,"LocationCountry":""\,"LocationPostalCode":""\,"LocationFullAddr
+ ess":""}]
+X-MICROSOFT-LOCATIONSOURCE:None
+X-MICROSOFT-ONLINEMEETINGCONFERENCEID:734724140
+X-MICROSOFT-ONLINEMEETINGINFORMATION:{"OnlineMeetingChannelId":null\,"Onl
+ ineMeetingProvider":3}
+X-MICROSOFT-ONLINEMEETINGTOLLNUMBER:+1 647-794-5676
+X-MICROSOFT-REQUESTEDATTENDANCEMODE:DEFAULT
+X-MICROSOFT-SCHEDULINGSERVICEUPDATEURL:https://api.scheduler.teams.micros
+ oft.com/teams/cd602454-192c-45bb-b058-f2e52a5ac37a/fb8b33bf-91ac-4fab-8b
+ 4a-81e07170b41a/19_meeting_NzYwYTRkM2QtMDRkNC00M2ZiLWJhZDgtMjUxZjQyYjEyZ
+ GI3@thread.v2/0
+X-MICROSOFT-SKYPETEAMSMEETINGURL:https://teams.microsoft.com/l/meetup-joi
+ n/19%3ameeting_NzYwYTRkM2QtMDRkNC00M2ZiLWJhZDgtMjUxZjQyYjEyZGI3%40thread
+ .v2/0?context=%7b%22Tid%22%3a%22cd602454-192c-45bb-b058-f2e52a5ac37a%22%
+ 2c%22Oid%22%3a%22fb8b33bf-91ac-4fab-8b4a-81e07170b41a%22%7d
+X-MICROSOFT-SKYPETEAMSPROPERTIES:{"cid":"19:meeting_NzYwYTRkM2QtMDRkNC00M
+ 2ZiLWJhZDgtMjUxZjQyYjEyZGI3@thread.v2"\,"rid":0\,"mid":0\,"uid":null\,"p
+ rivate":true\,"type":0}
+END:VEVENT
+BEGIN:VEVENT
 ATTENDEE;CN="Sauzède Dorian";CUTYPE=UNKNOWN;EMAIL=dorian.sauzede@gmail.co
  m;PARTSTAT=ACCEPTED;ROLE=REQ-PARTICIPANT;SCHEDULE-AGENT=NONE:mailto:dori
  an.sauzede@gmail.com
