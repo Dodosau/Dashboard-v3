@@ -666,6 +666,36 @@ X-APPLE-CREATOR-IDENTITY:com.apple.mobilecal
 X-APPLE-CREATOR-TEAM-IDENTITY:0000000000
 END:VEVENT
 BEGIN:VEVENT
+CLASS:PUBLIC
+CREATED:20261013T170048Z
+DTEND:20261019T154500Z
+DTSTAMP:20261013T181448Z
+DTSTART:20261019T144500Z
+LAST-MODIFIED:20261013T170048Z
+LOCATION:83 Rachel Est
+PRIORITY:5
+SEQUENCE:0
+SUMMARY;LANGUAGE=fr-ca: Prochain rendez-vous
+UID:136b5690-97bf-43b1-bd70-2264d89ce532
+X-ALT-DESC;FMTTYPE=text/html:<P>Bonjour M. Dorian SAUZÈDE\,</P>\n<P>&nbsp
+ \;</P>\n<P>&nbsp\;</P>\n<P>Nous désirons vous rappeler votre rendez-vous
+ &nbsp\;le lundi 19 octobre 2026 à 10:45&nbsp\;pour une durée de&nbsp\;60
+  minutes.</P>\n<P>&nbsp\;</P>\n<P>Cependant\, advenant le cas où vous ne
+  pouvez pas vous présenter à l'heure prévue\, veuillez-nous en aviser le
+  plus rapidement possible par téléphone&nbsp\;au (514) 288-8484 durant n
+ os heures d'ouverture ou par courriel.</P>\n<P><SPAN style="COLOR: #3399
+ 66"><STRONG>Veuillez noter que ce système ne reçoit pas les réponses\, t
+ ous les courriels doivent être envoyés au info@dentisteparisloft.com. </
+ STRONG></SPAN></P>\n<P><SPAN style="COLOR: #339966">&nbsp\;</SPAN></P>\n
+ <P><SPAN style="COLOR: #339966"><STRONG><EM>**Tous les rendez-vous doive
+ nt être confirmés minimum&nbsp\;48 h à l’avance. Si le rendez-vous n’est
+  pas confirmé il sera automatiquement annulé la veille à midi. **</EM></
+ STRONG></SPAN></P>\n<P>&nbsp\;</P>\n<P>&nbsp\;</P>\n<P>Veuillez recevoir
+  nos plus cordiales salutations\,</P>\n<P>&nbsp\;</P>\n<P><EM>L’équipe d
+ u centre dentaire Parisloft</EM></P>\n<P>83 Rue Rachel E\, Montréal\, QC
+  H2W 1C7<BR>(514) 288-8484</P>
+END:VEVENT
+BEGIN:VEVENT
 CREATED:20240917T162025Z
 DTEND;TZID=America/Toronto:20240923T020000
 DTSTAMP:20240922T203500Z
@@ -3628,6 +3658,32 @@ X-APPLE-STRUCTURED-LOCATION;VALUE=URI;X-APPLE-MAPKIT-HANDLE=CAESqAIIrk0Qq
  mxlcyBkZSBHYXVsbGUQACoCZnJAAA==;X-APPLE-RADIUS=5676.704354994144;X-APPLE
  -REFERENCEFRAME=1;X-TITLE="Aéroport Paris-Charles de Gaulle\n77990 Le Me
  snil-Amelot, France":geo:49.005265,2.576873
+END:VEVENT
+BEGIN:VEVENT
+CLASS:PUBLIC
+CREATED:20261013T165948Z
+DTEND:20271019T170000Z
+DTSTAMP:20261013T181359Z
+DTSTART:20271019T160000Z
+LAST-MODIFIED:20261013T165948Z
+LOCATION:83 Rachel Est
+PRIORITY:5
+SEQUENCE:0
+SUMMARY;LANGUAGE=fr-ca:Facture détaillée
+UID:6bb845fa-7557-414b-8f5d-19b90c7a08b5
+X-ALT-DESC;FMTTYPE=text/html:<P>Bonjour M. Dorian SAUZÈDE\,</P>\n<P>&nbsp
+ \;</P>\n<P>&nbsp\;</P>\n<P>Voici\, tel que convenu\, la facture détaillé
+ e pour les traitements reçus. S’il vous manque quoique ce soit n’hésitez
+  surtout pas à nous contacter\, nous vous aideront avec plaisir.</P>\n<P
+ ><SPAN style="COLOR: #339966"><STRONG>Veuillez noter que ce système ne r
+ eçoit pas les réponses\, tous les courriels doivent être envoyés au </ST
+ RONG></SPAN><A href="mailto:info@centredentairedehautetechnologie.com"><
+ SPAN style="COLOR: #339966"><STRONG>info@dentisteparisloft.com</STRONG><
+ /SPAN></A><SPAN style="COLOR: #339966"><STRONG>.</STRONG></SPAN></P>\n<P
+ >&nbsp\;</P>\n<P>&nbsp\;</P>\n<P>Veuillez recevoir nos plus cordiales sa
+ lutations\,</P>\n<P>&nbsp\;</P>\n<P><EM>L’équipe du centre dentaire Pari
+ sloft</EM><BR>&nbsp\;</P>\n<P>83 Rue Rachel E\, Montréal\, QC H2W 1C7<BR
+ >(514) 288-8484</P>
 END:VEVENT
 BEGIN:VEVENT
 CREATED:20240906T201053Z
