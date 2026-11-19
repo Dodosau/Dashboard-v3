@@ -6947,6 +6947,38 @@ X-APPLE-CREATOR-IDENTITY:com.apple.mobilecal
 X-APPLE-CREATOR-TEAM-IDENTITY:0000000000
 END:VEVENT
 BEGIN:VEVENT
+CREATED:20261119T174004Z
+DESCRIPTION:-::~:~::~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~
+ :~:~:~:~:~:~:~:~:~::~:~::-\nParticiper via Google Meet : https://meet.go
+ ogle.com/aom-aihb-hgb\nOu composez le : (CA) +1 647-735-4684 Code PIN : 
+ 473264224#\nPlus de numéros de téléphone: https://tel.meet/aom-aihb-hgb?
+ pin=5466847325650&hs=7\n\nPour en savoir plus sur Meet : https://support
+ .google.com/a/users/answer/9282720\n\nVeuillez ne pas modifier cette sec
+ tion.\n-::~:~::~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~
+ :~:~:~:~:~:~:~::~:~::-
+DTEND;TZID=America/Toronto:20261123T123000
+DTSTAMP:20261119T211854Z
+DTSTART;TZID=America/Toronto:20261123T120000
+LAST-MODIFIED:20261119T211851Z
+LOCATION:2057 Rue Montcalm\, Montréal\, QC H2L 3H8\, Canada\; https://mee
+ t.google.com/aom-aihb-hgb
+SEQUENCE:0
+SUMMARY:Visite au 2057 rue Montcalm\, Montréal 
+UID:E66A7DB8-57CE-4D8E-B8A9-86E63EDAD31A
+URL;VALUE=URI:message:%3Ccalendar-f391e6e0-6880-4a8c-a655-bd949b5c5ef6@go
+ ogle.com%3E?c=1795106122&k=%7C2rb2c5oha2f7so5og01v2kmj64@google.com
+X-APPLE-CREATOR-IDENTITY:com.apple.mobilecal
+X-APPLE-CREATOR-TEAM-IDENTITY:0000000000
+X-APPLE-SUGGESTION-INFO-CHANGED-FIELDS:0
+X-APPLE-SUGGESTION-INFO-CHANGES-ACKNOWLEDGED:FALSE
+X-APPLE-SUGGESTION-INFO-OPAQUE-KEY:|2rb2c5oha2f7so5og01v2kmj64@google.com
+ 
+X-APPLE-SUGGESTION-INFO-TIMESTAMP:20571119T163522Z
+X-APPLE-SUGGESTION-INFO-UNIQUE-KEY:|2|\\|2rb2c5oha2f7so5og01v2kmj64@googl
+ e.com|\\|5\\|\\\\\\|BBA9C929-DBC9-42D5-B82B-25C6510F5F03\\\\\\|<calendar
+ -f391e6e0-6880-4a8c-a655-bd949b5c5ef6@google.com>
+END:VEVENT
+BEGIN:VEVENT
 CREATED:20251205T155640Z
 DTEND;TZID=America/Toronto:20251216T200000
 DTSTAMP:20251215T021821Z
