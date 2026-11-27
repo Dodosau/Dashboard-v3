@@ -1,1 +1,1 @@
-{"ok":true,"routeId":"55","stopId":"52103","generatedAtUnix":1795785972,"error":null,"message":"OK","nextBusMinutes":11,"nextBus2Minutes":25,"nextBus3Minutes":41,"departureTimeUnix":1795786604,"departure2TimeUnix":1795787444,"departure3TimeUnix":1795788404,"feedTimestampUnix":1795785967,"feedAgeSeconds":5}
+{"ok":false,"routeId":"55","stopId":"52103","generatedAtUnix":1795817673,"error":"Upstream error 504"}
